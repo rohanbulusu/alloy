@@ -227,6 +227,16 @@ mod real {
         use super::*;
 
         #[test]
+        fn left_absorption() {
+            assert_eq!(real![0] * real![134], real![0])
+        }
+
+        #[test]
+        fn right_absorption() {
+            assert_eq!(real![1431] * real![0], real![0])
+        }
+
+        #[test]
         fn left_identity() {
             assert_eq!(real![1] * real![12], real![12])
         }
