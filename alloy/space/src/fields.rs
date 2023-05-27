@@ -1,6 +1,57 @@
 //! Representations of the real and complex numbers.
 
 use std::ops::{Deref, DerefMut, Add, Sub, Mul, Div, Neg};
+use std::cmp::{Ordering, PartialOrd, Ord};
+
+pub trait Unital {
+    fn one() -> Self;
+}
+
+pub trait Trigonometric: Copy + Unital + Div<Output=Self> {
+
+    fn sin(self) -> Self;
+
+    fn cos(self) -> Self;
+
+    fn tan(self) -> Self {
+        self.sin() / self.cos()
+    }
+
+    fn csc(self) -> Self {
+        Self::one() / self.sin()
+    }
+
+    fn sec(self) -> Self {
+        Self::one() / self.cos()
+    }
+
+    fn cot(self) -> Self {
+        self.cos() / self.sin()
+    }
+
+}
+
+pub trait InverseTrigonometric: Copy + Unital + Div<Output=Self> {
+
+    fn arcsin(self) -> Self;
+
+    fn arccos(self) -> Self;
+
+    fn arctan(self) -> Self;
+
+    fn arccsc(self) -> Self {
+        Self::one() / self.arcsin()
+    }
+
+    fn arcsec(self) -> Self {
+        Self::one() / self.arccos()
+    }
+
+    fn arccot(self) -> Self {
+        Self::one() / self.arctan()
+    }
+
+}
 
 macro_rules! real {
     ($val:expr) => {{
@@ -17,11 +68,21 @@ pub struct Real {
 
 impl Real {
 
-    pub const EQUALITY_THRESHOLD: f64 = 3.0*std::f64::EPSILON;
+    const EQUALITY_THRESHOLD: f64 = 3.0*std::f64::EPSILON;
     
     #[inline]
     pub const fn new(value: f64) -> Self {
         Self { value }
+    }
+
+    #[inline]
+    pub fn is_positive(&self) -> bool {
+        self > &real![0]
+    }
+
+    #[inline]
+    pub fn is_negative(&self) -> bool {
+        self < &real![0]
     }
 
     fn approx_eq(a: f64, b: f64) -> bool {
@@ -67,6 +128,24 @@ impl PartialEq for Real {
 }
 
 impl Eq for Real {}
+
+impl PartialOrd<Self> for Real {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        if self.value < other.value {
+            return Some(Ordering::Less);
+        }
+        if self.value > other.value {
+            return Some(Ordering::Greater);
+        }
+        Some(Ordering::Equal)
+    }
+}
+
+impl Ord for Real {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.partial_cmp(other).unwrap()
+    }
+}
 
 impl std::fmt::Display for Real {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
