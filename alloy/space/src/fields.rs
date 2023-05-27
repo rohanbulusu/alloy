@@ -3,35 +3,51 @@
 use std::ops::{Deref, DerefMut, Add, Sub, Mul, Div, Neg};
 use std::cmp::{Ordering, PartialOrd, Ord};
 
-pub trait Unital {
+pub trait AdditiveIdentity {
+    fn zero() -> Self;
+}
+
+pub trait MultiplicativeIdentity {
     fn one() -> Self;
 }
 
-pub trait Trigonometric: Copy + Unital + Div<Output=Self> {
+pub trait Trigonometric: Copy + PartialEq + AdditiveIdentity + MultiplicativeIdentity + Div<Output=Self> {
 
     fn sin(self) -> Self;
 
     fn cos(self) -> Self;
 
-    fn tan(self) -> Self {
-        self.sin() / self.cos()
+    fn tan(self) -> Option<Self> {
+        if self.cos() == Self::zero() {
+            return None;
+        }
+        Some(self.sin() / self.cos())
     }
 
-    fn csc(self) -> Self {
-        Self::one() / self.sin()
+    fn csc(self) -> Option<Self> {
+        if self.sin() == Self::zero() {
+            return None;
+        }
+        Some(Self::one() / self.sin())
     }
 
-    fn sec(self) -> Self {
-        Self::one() / self.cos()
+    fn sec(self) -> Option<Self> {
+        if self.cos() == Self::zero() {
+            return None;
+        }
+        Some(Self::one() / self.cos())
     }
 
-    fn cot(self) -> Self {
-        self.cos() / self.sin()
+    fn cot(self) -> Option<Self> {
+        if self.sin() == Self::zero() {
+            return None;
+        }
+        Some(self.cos() / self.sin())
     }
 
 }
 
-pub trait InverseTrigonometric: Copy + Unital + Div<Output=Self> {
+pub trait InverseTrigonometric: Copy + PartialEq + AdditiveIdentity + Div<Output=Self> {
 
     fn arcsin(self) -> Self;
 
@@ -39,11 +55,11 @@ pub trait InverseTrigonometric: Copy + Unital + Div<Output=Self> {
 
     fn arctan(self) -> Self;
 
-    fn arccsc(self) -> Self;
+    fn arccsc(self) -> Option<Self>;
 
-    fn arcsec(self) -> Self;
+    fn arcsec(self) -> Option<Self>;
 
-    fn arccot(self) -> Self;
+    fn arccot(self) -> Option<Self>;
 
 }
 
@@ -166,7 +182,13 @@ impl DerefMut for Real {
     }
 }
 
-impl Unital for Real {
+impl AdditiveIdentity for Real {
+    fn zero() -> Self {
+        real![0]
+    }
+}
+
+impl MultiplicativeIdentity for Real {
     fn one() -> Self {
         real![1]
     }
@@ -183,7 +205,6 @@ impl Trigonometric for Real {
     }
 
 }
-
 
 impl Add<Self> for Real {
     type Output = Self;
