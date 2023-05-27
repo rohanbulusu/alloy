@@ -323,4 +323,30 @@ mod real {
 
     }
 
+    mod negation {
+
+        use super::*;
+
+        #[test]
+        fn zero() {
+            assert_eq!(real![0], -real![0])
+        }
+
+        #[test]
+        fn positive() {
+            assert_eq!(real![-1], -real![1])
+        }
+
+        #[test]
+        fn negative() {
+            assert_eq!(real![1], -real![-1])
+        }
+
+        #[test]
+        fn fractional() {
+            assert_eq!(real![121.2], -real![-121.2])
+        }
+
+    }
+
 }
