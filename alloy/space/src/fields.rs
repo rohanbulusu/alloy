@@ -23,6 +23,10 @@ impl Real {
     pub const fn new(value: f64) -> Self {
         Self { value }
     }
+
+    fn approx_eq(a: f64, b: f64) -> bool {
+        (a - b).abs() <= Self::EQUALITY_THRESHOLD
+    }
 }
 
 macro_rules! real_from {
@@ -58,7 +62,7 @@ unsafe impl Sync for Real {}
 
 impl PartialEq for Real {
     fn eq(&self, other: &Self) -> bool {
-        (self.value - other.value).abs() <= Self::EQUALITY_THRESHOLD
+        Self::approx_eq(self.value, other.value)
     }
 }
 
@@ -113,6 +117,9 @@ impl Mul<Self> for Real {
 impl Div<Self> for Real {
     type Output = Self;
     fn div(self, other: Self) -> Self {
+        if Self::approx_eq(other.value, 0.0) {
+            panic!("Cannot attempt division by zero")
+        }
         Self::new(self.value / other.value)
     }
 }
@@ -264,6 +271,54 @@ mod real {
         #[test]
         fn fractional() {
             assert_eq!(real![-1.5] * real![12.6], real![-18.9])
+        }
+
+    }
+
+    mod division {
+
+        use super::*;
+
+        #[test]
+        fn left_absorption() {
+            assert_eq!(real![0] / real![12], real![0])
+        }
+
+        #[test]
+        #[should_panic]
+        fn divide_by_zero() {
+            assert_eq!(real![12] / real![0], real![std::f64::NAN])
+        }
+
+        #[test]
+        fn left_invertibility() {
+            assert_eq!((real![6] / real![12]) * real![2], real![1])
+        }
+
+        #[test]
+        fn right_identity() {
+            assert_eq!(real![12] / real![1], real![12])
+        }
+
+        #[test]
+        fn double_positive() {
+            assert_eq!(real![12] / real![3], real![4])
+        }
+
+        #[test]
+        fn mixed_sign() {
+            assert_eq!(real![12] / real![-2], real![-6]);
+            assert_eq!(real![-12] / real![2], real![-6])
+        }
+
+        #[test]
+        fn double_negative() {
+            assert_eq!(real![-12] / real![-3], real![4])
+        }
+
+        #[test]
+        fn fractional() {
+            assert_eq!(real![12.6] / real![-6.3], real![-2])
         }
 
     }
