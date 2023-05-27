@@ -106,7 +106,7 @@ impl Sub<Self> for Real {
 impl Mul<Self> for Real {
     type Output = Self;
     fn mul(self, other: Self) -> Self {
-        Self::new(self.value - other.value)
+        Self::new(self.value * other.value)
     }
 }
 
@@ -218,6 +218,42 @@ mod real {
         #[test]
         fn fractional() {
             assert_eq!(real![-12.3] - real![13.5], real![-25.8])
+        }
+
+    }
+
+    mod multiplication {
+
+        use super::*;
+
+        #[test]
+        fn left_identity() {
+            assert_eq!(real![1] * real![12], real![12])
+        }
+
+        #[test]
+        fn right_identity() {
+            assert_eq!(real![12] * real![1], real![12])
+        }
+
+        #[test]
+        fn double_positive() {
+            assert_eq!(real![2] * real![3], real![6])
+        }
+
+        #[test]
+        fn mixed_sign() {
+            assert_eq!(real![23] * real![-4], real![-92])
+        }
+
+        #[test]
+        fn double_negative() {
+            assert_eq!(real![-12] * real![-12], real![144])
+        }
+
+        #[test]
+        fn fractional() {
+            assert_eq!(real![-1.5] * real![12.6], real![-18.9])
         }
 
     }
