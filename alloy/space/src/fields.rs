@@ -184,9 +184,6 @@ impl Trigonometric for Real {
 
 }
 
-impl InverseTrigonometric for Real {
-
-}
 
 impl Add<Self> for Real {
     type Output = Self;
