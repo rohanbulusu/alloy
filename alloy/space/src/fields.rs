@@ -39,17 +39,11 @@ pub trait InverseTrigonometric: Copy + Unital + Div<Output=Self> {
 
     fn arctan(self) -> Self;
 
-    fn arccsc(self) -> Self {
-        Self::one() / self.arcsin()
-    }
+    fn arccsc(self) -> Self;
 
-    fn arcsec(self) -> Self {
-        Self::one() / self.arccos()
-    }
+    fn arcsec(self) -> Self;
 
-    fn arccot(self) -> Self {
-        Self::one() / self.arctan()
-    }
+    fn arccot(self) -> Self;
 
 }
 
@@ -176,6 +170,22 @@ impl Unital for Real {
     fn one() -> Self {
         real![1]
     }
+}
+
+impl Trigonometric for Real {
+
+    fn sin(self) -> Self {
+        real![self.value.sin()]
+    }
+
+    fn cos(self) -> Self {
+        real![self.value.cos()]
+    }
+
+}
+
+impl InverseTrigonometric for Real {
+
 }
 
 impl Add<Self> for Real {
