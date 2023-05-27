@@ -172,6 +172,12 @@ impl DerefMut for Real {
     }
 }
 
+impl Unital for Real {
+    fn one() -> Self {
+        real![1]
+    }
+}
+
 impl Add<Self> for Real {
     type Output = Self;
     fn add(self, other: Self) -> Self {
