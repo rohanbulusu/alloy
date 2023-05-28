@@ -1,6 +1,6 @@
 //! Representations of the real and complex numbers.
 
-use std::ops::{Deref, DerefMut, Add, Sub, Mul, Div, Neg};
+use std::ops::{Deref, DerefMut, Add, Sub, Mul, Div, Neg, Rem};
 use std::cmp::{Ordering, PartialOrd, Ord};
 
 pub trait AdditiveIdentity {
@@ -79,7 +79,8 @@ pub struct Real {
 impl Real {
 
     const EQUALITY_THRESHOLD: f64 = 3.0*std::f64::EPSILON;
-    
+    const APPROXIMATION_ACCURACY: usize = 5;    
+
     #[inline]
     pub const fn new(value: f64) -> Self {
         Self { value }
@@ -98,6 +99,17 @@ impl Real {
     fn approx_eq(a: f64, b: f64) -> bool {
         (a - b).abs() <= Self::EQUALITY_THRESHOLD
     }
+
+    #[inline]
+    pub fn is_integer(&self) -> bool {
+        real![self.value.fract()] == real![0]
+    }
+
+    #[inline]
+    pub fn is_fractional(&self) -> bool {
+        !self.is_integer()
+    }
+
 }
 
 macro_rules! real_from {
@@ -241,6 +253,25 @@ impl Neg for Real {
     type Output = Self;
     fn neg(self) -> Self {
         Self::new(-self.value)
+    }
+}
+
+impl Rem<Self> for Real {
+    type Output = Self;
+    fn rem(self, other: Self) -> Self {
+        if self.is_fractional() && other.is_fractional() {
+            todo!("Modular arithmetic over the reals is as-of-yet unimplemented")
+        }
+        if self.is_fractional() {
+            todo!("Modular arithmetic over the reals is as-of-yet unimplemented")
+        }
+        if other.is_fractional() {
+            todo!("Modular arithmetic over the reals is as-of-yet unimplemented")
+        }
+        if other == real![0] {
+            return self;
+        }
+        Self::new(self.value % other.value)
     }
 }
 
@@ -458,6 +489,56 @@ mod real {
         #[test]
         fn fractional() {
             assert_eq!(real![121.2], -real![-121.2])
+        }
+
+    }
+
+    mod remainder {
+
+        use super::*;
+
+        #[test]
+        fn mod_zero() {
+            assert_eq!(real![12] % real![0], real![12])
+        }
+
+        #[test]
+        fn mod_one() {
+            assert_eq!(real![12] % real![1], real![0])
+        }
+
+        #[test]
+        fn max() {
+            assert_eq!(real![13] % real![13], real![0])
+        }
+
+        #[test]
+        fn min() {
+            assert_eq!(real![0] % real![1321], real![0])
+        }
+
+        #[test]
+        fn standard() {
+            assert_eq!(real![13] % real![6], real![1])
+        }
+
+        #[ignore]
+        #[test]
+        fn float_mod_int() {
+            assert_eq!(real![2.5] % real![2], real![0.5])
+        }
+
+        #[ignore]
+        #[test]
+        fn float_mod_float() {
+            assert_eq!(real![3.5] % real![0.5], real![7]);
+            assert_eq!(real![3.5] % real![2.5], real![1])
+        }
+
+        #[ignore]
+        #[test]
+        fn int_mod_float() {
+            assert_eq!(real![2] % real![0.5], real![4])
         }
 
     }
