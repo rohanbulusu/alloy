@@ -110,6 +110,34 @@ impl Real {
         !self.is_integer()
     }
 
+    fn sign(n: f64) -> isize {
+        if n >= 0.0 {
+            return 1;
+        }
+        return -1;
+    }
+
+    fn gcd(mut a: usize, mut b: usize) -> usize {
+        while b > 0 {
+            let overflow = a % b;
+            a = b;
+            b = overflow;
+        }
+        a
+    }
+
+    pub fn to_rational(&self) -> (isize, usize) {
+        let base = self.value.log2().floor();
+        if base >= 0.0 {
+            return (self.value as isize, 1)
+        }
+        let numerator = (self.value / f64::EPSILON) as usize;
+        let denominator = f64::EPSILON.powi(-1) as usize;
+        let gcd = Self::gcd(numerator, denominator);
+        ((numerator / gcd) as isize * Self::sign(self.value), denominator / gcd)
+
+    }
+
 }
 
 macro_rules! real_from {
