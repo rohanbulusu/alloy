@@ -135,8 +135,18 @@ impl Real {
         let denominator = f64::EPSILON.powi(-1) as usize;
         let gcd = Self::gcd(numerator, denominator);
         ((numerator / gcd) as isize * Self::sign(self.value), denominator / gcd)
-
     }
+
+    pub fn fact(&self) -> Self {
+        if self.is_fractional() {
+            todo!("Support for the Gamma function has not yet been implemented")
+        }
+        if self == &real![0] {
+            return real![1];
+        }
+        real![(1..=(self.value as usize)).product::<usize>()]
+    }
+
 
 }
 
@@ -567,6 +577,41 @@ mod real {
         #[test]
         fn int_mod_float() {
             assert_eq!(real![2] % real![0.5], real![4])
+        }
+
+    }
+
+    mod factorials {
+
+        use super::*;
+
+        #[test]
+        fn zero() {
+            assert_eq!(real![0].fact(), real![1])
+        }
+
+        #[test]
+        fn one() {
+            assert_eq!(real![1].fact(), real![1])
+        }
+
+        #[test]
+        fn standard() {
+            assert_eq!(real![5].fact(), real![120])
+        }
+
+        #[ignore]
+        #[should_panic]
+        #[test]
+        fn negative_int() {
+            let _ = real![-3].fact();
+        }
+
+        #[ignore]
+        #[test]
+        fn fractional() {
+            assert_eq!(real![0.5].fact(), real![0.5*std::f64::consts::PI.sqrt()]);
+            assert_eq!(real![-1.5].fact(), real![-2.0*std::f64::consts::PI.sqrt()])
         }
 
     }
