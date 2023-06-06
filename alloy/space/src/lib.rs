@@ -16,8 +16,6 @@
 
 pub mod linal;
 pub mod points;
-pub mod fields;
 
 pub use linal::*;
 pub use points::*;
-pub use fields::*;
