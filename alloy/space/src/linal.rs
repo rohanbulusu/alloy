@@ -189,6 +189,14 @@ impl<T> Neg for Vector<T> where T: Neg<Output=T> {
 	}
 }
 
+impl<T> IntoIterator for Vector<T> {
+	type Item = T;
+	type IntoIter = VecIter<T>;
+	fn into_iter(self) -> VecIter<T> {
+		VecIter::new(self)
+	}
+}
+
 impl<T, const N: usize> From<[T; N]> for Vector<T> {
 	fn from(components: [T; N]) -> Self {
 		Self::new(components)
@@ -218,10 +226,40 @@ impl<T> From<Vec<T>> for Vector<T> {
 	}
 }
 
+/// An iterator over a given [`Vector`].
+pub struct VecIter<T> {
+	vector: Vector<T>,
+	index: usize
+}
+
+impl<T> VecIter<T> {
+
+	/// Constructs a new `VecIter` from a [`Vector`].
+	pub fn new(vector: Vector<T>) -> Self {
+		Self {
+			vector,
+			index: 0
+		}
+	}
+
+}
+
+impl<T> Iterator for VecIter<T> {
+	type Item = T;
+	fn next(&mut self) -> Option<T> {
+		if self.index >= self.vector.dim {
+			return None;
+		}
+		let next_component = self.vector.get(self.index);
+		self.index += 1;
+		Some(next_component)
+	}
+}
+
 #[cfg(test)]
 mod vector {
 
-	use super::Vector;
+	use super::{Vector, VecIter};
 
 	mod dim {
 
@@ -699,6 +737,22 @@ mod vector {
 		#[test]
 		fn negative() {
 			assert_eq!(-Vector::new([-1, -2, -3]), Vector::new([1, 2, 3]))
+		}
+
+	}
+
+	mod iteration {
+
+		use super::{Vector, VecIter};
+
+		#[test]
+		fn construction() {
+			let _: VecIter<usize> = Vector::new([1, 2, 3]).into_iter();
+		}
+
+		#[test]
+		fn last() {
+			assert_eq!(Vector::new([1, 2]).into_iter().last().unwrap(), 2)
 		}
 
 	}
