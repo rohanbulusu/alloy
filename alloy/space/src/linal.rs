@@ -1,6 +1,6 @@
 //! Linear algebra support.
 
-use std::ops::{Add, Sub, Mul, Div};
+use std::ops::{Add, Sub, Mul, Div, Neg};
 
 /// Vector implementation for elements of type `T`.
 pub struct Vector<T> {
@@ -45,6 +45,34 @@ impl<T> Vector<T> {
 			panic!("Cannot fetch element with index {} for a {}-dimensional Vector", index, self.dim);
 		}
 		unsafe { std::ptr::read(self.ptr.as_ptr().add(index)) }
+	}
+
+}
+
+impl<T> Vector<T> where T: Sub<Output=T> + Mul<Output=T> {
+
+	/// Cross product between `a` and `b`.
+	///
+	/// # Panics
+	/// `a` and `b` must both be three-dimensional; the cross product is
+	/// undefined for `Vector`s of greater dimensionality.
+	/// 
+	/// ```should_panic
+	/// # use crate::space::linal::Vector;
+	/// let _ = Vector::cross(Vector::new([1.0, 2.0]), Vector::new([3.0, 4.0]));
+	/// ```
+	pub fn cross(a: Self, b: Self) -> Self {
+		if a.dim != b.dim {
+			panic!("Cross products can only be taken between Vectors of the same dimensionality")
+		}
+		if a.dim != 3 {
+			panic!("Cross products are only defined for three-dimensional Vectors")
+		}
+		Vector::new([
+			a.get(1)*b.get(2) - a.get(2)*b.get(1),
+			a.get(2)*b.get(0) - a.get(0)*b.get(2),
+			a.get(0)*b.get(1) - a.get(1)*b.get(0)
+		])
 	}
 
 }
@@ -151,6 +179,16 @@ impl<T> Div<T> for Vector<T> where T: Copy + Div<Output=T> {
 	}
 }
 
+impl<T> Neg for Vector<T> where T: Neg<Output=T> {
+	type Output = Self;
+	fn neg(self) -> Self {
+		for i in 0..self.dim {
+			unsafe { std::ptr::write(self.ptr.as_ptr().add(i), -self.get(i)) }
+		}
+		self
+	}
+}
+
 impl<T, const N: usize> From<[T; N]> for Vector<T> {
 	fn from(components: [T; N]) -> Self {
 		Self::new(components)
@@ -232,6 +270,36 @@ mod vector {
 		fn overindexing() {
 			let v = Vector::new([1, 2]);
 			let _: usize = v.get(2);
+		}
+
+	}
+
+	mod cross_product {
+
+		use super::Vector;
+
+		#[test]
+		fn orthogonal() {
+			let i_hat = Vector::new([1.0, 0.0, 0.0]);
+			let j_hat = Vector::new([0.0, 1.0, 0.0]);
+			assert_eq!(Vector::cross(i_hat, j_hat), Vector::new([0.0, 0.0, 1.0]))
+		}
+
+		#[test]
+		fn anti_symmetry() {
+			let left_i_hat = Vector::new([1.0, 0.0, 0.0]);
+			let right_j_hat = Vector::new([0.0, 1.0, 0.0]);
+			let left_j_hat = Vector::new([0.0, 1.0, 0.0]);
+			let right_i_hat = Vector::new([1.0, 0.0, 0.0]);
+			assert_eq!(Vector::cross(left_i_hat, right_j_hat), -Vector::cross(left_j_hat, right_i_hat))
+		}
+
+		#[test]
+		fn parallel() {
+			assert_eq!(
+				Vector::cross(Vector::new([32.0, 2.0, 4.0]), Vector::new([32.0, 2.0, 4.0])),
+				Vector::new([0.0, 0.0, 0.0])
+			)
 		}
 
 	}
@@ -600,6 +668,37 @@ mod vector {
 		#[test]
 		fn negative() {
 			assert_eq!(Vector::new([2, 4, 6]) / -2, Vector::new([-1, -2, -3]))
+		}
+
+	}
+
+	mod negation {
+
+		use super::Vector;
+
+		mod zero {
+
+			use super::Vector;
+
+			#[test]
+			fn empty_zero() {
+				assert_eq!(-Vector::<isize>::new([]), Vector::<isize>::new([]));
+			}
+
+			#[test]
+			fn mismatched_zero() {
+				assert_eq!(-Vector::new([0, 0]), Vector::new([0, 0]));
+			}
+		}
+
+		#[test]
+		fn standard() {
+			assert_eq!(-Vector::new([1, 2, 3]), Vector::new([-1, -2, -3]))
+		}
+
+		#[test]
+		fn negative() {
+			assert_eq!(-Vector::new([-1, -2, -3]), Vector::new([1, 2, 3]))
 		}
 
 	}
