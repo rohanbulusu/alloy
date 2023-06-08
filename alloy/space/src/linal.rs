@@ -968,6 +968,7 @@ impl<T> Matrix<T> {
 	/// let row = Matrix::new([[1, 2, 3]]);
 	/// assert!(!row.is_col());
 	/// ```
+	/// ```
 	/// # use crate::space::linal::Matrix;
 	/// let square = Matrix::new([[1, 2], [3, 4]]);
 	/// assert!(!square.is_col());
