@@ -1161,8 +1161,16 @@ pub enum Triangularity {
 	LowerTriangular
 }
 
+/// Markers for the symmetry of a [`Matrix`].
+///
+/// Given a square matrix, there are two symmetry properties it can exhibit
+/// (assuming it exhibits any at all). If some `Matrix` _A_ is symmetric (ie.
+/// `Symmetric`), we have that _A_ = _A_<sup>T<sup>. If _A_ = -_A_<sup>T<sup>,
+/// then _A_ is said to be skew-symmetric (ie. `Skew`).
 pub enum Symmetry {
+	/// Marks a symmetric `Matrix`.
 	Symmetric,
+	/// Marks a skew-symmetric `Matrix`.
 	Skew
 }
 
