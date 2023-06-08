@@ -776,6 +776,13 @@ impl MatrixDimensions {
 
 	/// Compares the given candidate dimensions to the dimensions encapsulated
 	/// by `self`.
+	///
+	/// # Examples
+	/// ```
+	/// # use crate::space::linal::MatrixDimensions;
+	/// let dims = MatrixDimensions::new(2, 3);
+	/// assert!(dims.are(2, 3));
+	/// ```
 	pub fn are(&self, candidate_rows: usize, candidate_cols: usize) -> bool {
 		self.num_rows == candidate_rows && self.num_cols == candidate_cols
 	}
@@ -816,6 +823,7 @@ impl<T> Matrix<T> {
 		Self { ptr, dims }
 	}
 
+	/// Constructs a new `Matrix` from a [`Vec`] of `Vec`s.
 	pub fn with_vec(rows: Vec<Vec<T>>) -> Self {
 		let num_rows = rows.len();
 		let num_cols = rows[0].len();
