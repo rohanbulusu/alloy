@@ -1107,7 +1107,6 @@ impl<T> Matrix<T> where T: Default + PartialEq + Neg<Output=T> {
 			return None;
 		}
 		let mut is_symmetric = true;
-		let mut is_skew = true;
 		let transpose = self.transpose();
 		for i in 0..self.dims.num_rows {
 			for j in 0..self.dims.num_cols {
