@@ -1207,6 +1207,48 @@ impl<T> Matrix<T> where T: Default + PartialEq {
 
 }
 
+impl<T> Matrix<T> where T: Add<Output=T> {
+
+	/// Computes the trace of `self`.
+	///
+	/// # Panics
+	/// This is only defined for square matrices. If `self` is null or
+	/// otherwise non-square, a panic is issued.
+	/// ```should_panic
+	/// # use crate::space::linal::Matrix;
+	/// let m = Matrix::<usize>::new::<0, 0>([]);
+	/// let _ = m.trace();
+	/// ```
+	/// ```should_panic
+	/// # use crate::space::linal::Matrix;
+	/// let m = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+	/// let _ = m.trace();
+	/// ```
+	///
+	/// # Examples
+	/// ```
+	/// # use crate::space::linal::Matrix;
+	/// let m = Matrix::new([[1, 2], [3, 4]]);
+	/// assert_eq!(m.trace(), 5);
+	/// ```
+	/// ```
+	/// # use crate::space::linal::Matrix;
+	/// let m = Matrix::new([[1]]);
+	/// assert_eq!(m.trace(), 1);
+	/// ```
+	pub fn trace(&self) -> T {
+		if !self.is_square() {
+			panic!("Cannot take the trace of a non-square matrix")
+		}
+		let mut sum: T = self.get(0, 0);
+		for i in 1..self.dims.num_rows {
+			sum = sum + self.get(i, i);
+		}
+		sum
+	}
+
+}
+
 impl<T> Matrix<T> where T: Default + PartialEq + Neg<Output=T> {
 
 	/// Determines the symmetry properties of `self`.
