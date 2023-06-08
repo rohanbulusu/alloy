@@ -1051,11 +1051,18 @@ impl<T> Matrix<T> where T: Default + PartialEq {
 
 	/// Returns the transpose of `self`.
 	///
-	/// For square matrices this is just the standard tranpose.
+	/// This is just the standard transpose, both for square and non-square
+	/// matrices.
 	/// ```
 	/// # use crate::space::linal::Matrix;
 	/// let m = Matrix::new([[1, 2], [3, 4]]);
 	/// let transposed_m = Matrix::new([[1, 3], [2, 4]]);
+	/// assert_eq!(m.transpose(), transposed_m);
+	/// ```
+	/// ```
+	/// # use crate::space::linal::Matrix;
+	/// let m = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+	/// let transposed_m = Matrix::new([[1, 4], [2, 5], [3, 6]]);
 	/// assert_eq!(m.transpose(), transposed_m);
 	/// ```
 	pub fn transpose(&self) -> Self {
