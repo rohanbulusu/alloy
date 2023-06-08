@@ -1144,9 +1144,20 @@ impl<T> PartialEq for Matrix<T> where T: PartialEq {
 
 impl<T> Eq for Matrix<T> where T: PartialEq {}
 
+/// Markers for the triangularity of a [`Matrix`].
+///
+/// Given a square matrix, there are three triangularity properties it can
+/// exhibit (assuming it exhibits any at all). If it is `Diagonal`, it is
+/// non-zero only on its primary diagonal; if it is `UpperTriangular`, then
+/// it is non-zero only on the entries _above_ and including the primary
+/// diagonal; if it is `LowerTriangular`, it is non-zero only on the entries
+/// _below_ and including the primary diagonal.
 pub enum Triangularity {
+	/// Marks a diagonal `Matrix`.
 	Diagonal,
+	/// Marks an upper-triangular `Matrix`.
 	UpperTriangular,
+	/// Marks a lower-triangular `Matrix`.
 	LowerTriangular
 }
 
