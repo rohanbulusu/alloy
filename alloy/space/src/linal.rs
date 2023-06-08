@@ -758,3 +758,557 @@ mod vector {
 	}
 
 }
+
+/// A container for the row and column counts of a [`Matrix`].
+#[derive(Debug, PartialEq, Eq)]
+pub struct MatrixDimensions {
+	num_rows: usize,
+	num_cols: usize
+}
+
+impl MatrixDimensions {
+
+	/// Constructs a new `MatrixDimensions` from a row count (`num_rows`) and a
+	/// a column count (`num_cols`).
+	pub fn new(num_rows: usize, num_cols: usize) -> Self {
+		Self { num_rows, num_cols }
+	}
+
+	/// Compares the given candidate dimensions to the dimensions encapsulated
+	/// by `self`.
+	pub fn are(&self, candidate_rows: usize, candidate_cols: usize) -> bool {
+		self.num_rows == candidate_rows && self.num_cols == candidate_cols
+	}
+
+}
+
+/// Matrix implementation for elements of type `T`.
+#[derive(Debug)]
+pub struct Matrix<T> {
+	ptr: std::ptr::NonNull<T>,
+	/// Encapsulates the dimensionality of the `Matrix`
+	pub dims: MatrixDimensions
+}
+
+impl<T> Matrix<T> {
+
+	/// Constructs a new `Matrix` from an array of component-containing rows.
+	pub fn new<const R: usize, const C: usize>(rows: [[T; C]; R]) -> Self {
+		// set up the allocation
+		let layout = std::alloc::Layout::array::<T>(R*C).unwrap();
+		let allocation = unsafe { std::alloc::alloc(layout) };
+		let ptr = match std::ptr::NonNull::new(allocation as *mut T) {
+			Some(p) => p,
+			None => std::alloc::handle_alloc_error(layout)
+		};
+		// set the components
+		for (i, row) in rows.into_iter().enumerate() {
+			for (j, component) in row.into_iter().enumerate() {
+				unsafe { std::ptr::write(ptr.as_ptr().add(C*i + j), component); }
+			}
+		}
+		// set the dimensions
+		let dims = if C == 0 {
+			MatrixDimensions::new(0, 0)
+		} else {
+			MatrixDimensions::new(R, C)
+		};
+		Self { ptr, dims }
+	}
+
+	pub fn with_vec(rows: Vec<Vec<T>>) -> Self {
+		let num_rows = rows.len();
+		let num_cols = rows[0].len();
+		// check row regularity
+		if !rows.iter().all(|r| r.len() == num_cols) {
+			panic!("All rows of a Matrix must have the same number of columns")
+		}
+		// set up the allocation
+		let layout = std::alloc::Layout::array::<T>(num_rows*num_cols).unwrap();
+		let allocation = unsafe { std::alloc::alloc(layout) };
+		let ptr = match std::ptr::NonNull::new(allocation as *mut T) {
+			Some(p) => p,
+			None => std::alloc::handle_alloc_error(layout)
+		};
+		// set the components
+		for (i, row) in rows.into_iter().enumerate() {
+			for (j, component) in row.into_iter().enumerate() {
+				unsafe { std::ptr::write(ptr.as_ptr().add(num_cols*i + j), component); }
+			}
+		}
+		// set the dimensions
+		let dims = if num_cols == 0 {
+			MatrixDimensions::new(0, 0)
+		} else {
+			MatrixDimensions::new(num_rows, num_cols)
+		};
+		Self { ptr, dims }
+	}
+
+	/// Returns the component of `self` specified by `candidate_row` and
+	/// `candidate_col`.
+	///
+	/// # Panics
+	/// If `self` is a zero-dimensional Matrix, a panic is issued.
+	/// ```should_panic
+	/// # use crate::space::linal::Matrix;
+	/// let null = Matrix::<usize>::new::<0, 0>([]);
+	/// let _: usize = null.get(0, 0); // `null` cannot be indexed!
+	/// ```
+	/// If `candidate_row` overindexes `self`, a similar panic is issued on
+	/// the basis of dimensionality.
+	/// ```should_panic
+	/// # use crate::space::linal::Matrix;
+	/// let m = Matrix::new([[1, 2], [3, 4]]);
+	/// let _: usize = m.get(2, 0); // `m` only has two rows!
+	/// ```
+	/// In the same vein, if `candidate_col` overindexes `self`, a panic
+	/// is again issued.
+	/// ```should_panic
+	/// # use crate::space::linal::Matrix;
+	/// let m = Matrix::new([[1, 2], [3, 4]]);
+	/// let _: usize = m.get(0, 2); // `m` only has two columns!
+	/// ```
+	///
+	/// # Examples
+	/// When provided with proper inputs, however, `get` is a powerful tool for
+	/// analyzing the components of a `Matrix`.
+	/// ```
+	/// # use crate::space::linal::Matrix;
+	/// let m = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+	/// assert_eq!(m.get(1, 2), 6);
+	/// ```
+	pub fn get(&self, candidate_row: usize, candidate_col: usize) -> T {
+		if self.dims.are(0, 0) {
+			panic!("Cannot index into a zero-dimensional Matrix")
+		}
+		if candidate_row >= self.dims.num_rows {
+			panic!("Cannot index Matrix rows beyond {}", self.dims.num_rows)
+		}
+		if candidate_col >= self.dims.num_cols {
+			panic!("Cannot index Matrix columns beyond {}", self.dims.num_cols)
+		}
+		unsafe { std::ptr::read(self.ptr.as_ptr().add(self.dims.num_cols*candidate_row + candidate_col)) }
+	}
+
+	/// Determines whether or not `self` is a square matrix.
+	///
+	/// This is checked simply by comparing the number of rows and columns in
+	/// `self`. If `self` is a zero-by-zero matrix, this determines `self` to 
+	/// be non-square.
+	///	
+	/// # Examples
+	/// ```
+	/// # use crate::space::linal::Matrix;
+	/// let m = Matrix::new([[1, 2], [3, 4]]);
+	/// assert!(m.is_square());
+	/// ```
+	/// ```
+	/// # use crate::space::linal::Matrix;
+	/// let n = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+	/// assert!(!n.is_square());
+	/// ```
+	/// ```
+	/// # use crate::space::linal::Matrix;
+	/// let null = Matrix::<usize>::new::<0, 0>([]);
+	/// assert!(!null.is_square());
+	/// ```
+	pub fn is_square(&self) -> bool {
+		if self.dims.are(0, 0) {
+			return false;
+		}
+		self.dims.num_rows == self.dims.num_cols
+	}
+
+
+	/// Determines whether or not `self` is a row matrix.
+	///
+	/// # Examples
+	/// ```
+	/// # use crate::space::linal::Matrix;
+	/// let row = Matrix::new([[1, 2, 3]]);
+	/// assert!(row.is_row());
+	/// ```
+	/// ```
+	/// # use crate::space::linal::Matrix;
+	/// let col = Matrix::new([[1], [2]]);
+	/// assert!(!col.is_row());
+	/// ```
+	/// ```
+	/// # use crate::space::linal::Matrix;
+	/// let square = Matrix::new([[1, 2], [3, 4]]);
+	/// assert!(!square.is_row());
+	/// ```
+	pub fn is_row(&self) -> bool {
+		self.dims.num_rows == 1
+	}
+
+	/// Determines whether or not `self` is a column matrix.
+	///
+	/// While column matrices are in effect vectors, they are
+	/// not interchangeable with [`Vector`] objects. The use
+	/// of column matrices is discouraged primarily 
+	/// 
+	/// # Examples
+	/// ```
+	/// # use crate::space::linal::Matrix;
+	/// let col = Matrix::new([[1], [2]]);
+	/// assert!(col.is_col());
+	/// ```
+	/// ```
+	/// # use crate::space::linal::Matrix;
+	/// let row = Matrix::new([[1, 2, 3]]);
+	/// assert!(!row.is_col());
+	/// ```
+	/// # use crate::space::linal::Matrix;
+	/// let square = Matrix::new([[1, 2], [3, 4]]);
+	/// assert!(!square.is_col());
+	/// ```
+	pub fn is_col(&self) -> bool {
+		self.dims.num_cols == 1
+	}
+
+}
+
+impl<T> Matrix<T> where T: Default + PartialEq {
+
+	/// Determines whether or not `self` is a diagonal matrix.
+	///
+	/// The first property of note is that diagonal matrices must be square.
+	/// If `self` is non-square, it is not diagonal.
+	/// ```
+	/// # use crate::space::linal::Matrix;
+	/// let m = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+	/// assert!(!m.is_diagonal());
+	/// ```
+	/// The defining property of diagonal matrices, however, is that they are
+	/// only non-zero on their diagonal. This requires a distinction between
+	/// zero and non-zero `T` values. The distinction here is made through
+	/// the `default` value of `T`, which is guaranteed through the [`Default`]
+	/// bound for this method.
+	/// ```
+	/// # use crate::space::linal::Matrix;
+	/// let m = Matrix::new([[1, 0], [0, 3]]);
+	/// assert!(m.is_diagonal());
+	/// ```
+	/// This could potentially have unintended consequences, particularly for
+	/// non-primitive types.
+	/// ```
+	/// # use crate::space::linal::Matrix;
+	/// #[derive(PartialEq)]
+	/// struct Wrapper {
+	///		inner: u8
+	/// }
+	///
+	/// impl Wrapper {
+	///		pub fn new(inner: u8) -> Self {
+	///			 Self { inner }
+	///		}
+	/// }
+	/// 
+	/// impl Default for Wrapper {
+	///		fn default() -> Self {
+	///			Self::new(1)
+	/// 	}
+	/// }
+	///
+	/// let attempted_identity = Matrix::new([
+	/// 	[Wrapper::new(1), Wrapper::new(0)],
+	///		[Wrapper::new(0), Wrapper::new(1)]
+	/// ]);
+	///
+	/// assert!(!attempted_identity.is_diagonal());
+	///
+	/// let quirky_identity = Matrix::new([
+	/// 	[Wrapper::new(0), Wrapper::new(1)],
+	/// 	[Wrapper::new(1), Wrapper::new(0)]
+	/// ]);
+	///
+	/// assert!(quirky_identity.is_diagonal());
+	/// ```
+	pub fn is_diagonal(&self) -> bool {
+		if !self.is_square() {
+			return false;
+		}
+		for i in 0..self.dims.num_rows {
+			for j in 0..self.dims.num_cols {
+				if i != j && self.get(i, j) != T::default() {
+					return false;
+				}
+			}
+		}
+		true
+	}
+
+	/// Returns the transpose of `self`.
+	///
+	/// For square matrices this is just the standard tranpose.
+	/// ```
+	/// # use crate::space::linal::Matrix;
+	/// let m = Matrix::new([[1, 2], [3, 4]]);
+	/// let transposed_m = Matrix::new([[1, 3], [2, 4]]);
+	/// assert_eq!(m.transpose(), transposed_m);
+	/// ```
+	pub fn transpose(&self) -> Self {
+		let mut transpose_rows: Vec<Vec<T>> = Vec::with_capacity(self.dims.num_cols);
+		for j in 0..self.dims.num_cols {
+			let mut transpose_row: Vec<T> = Vec::with_capacity(self.dims.num_rows);
+			for i in 0..self.dims.num_rows {
+				transpose_row.push(self.get(i, j));
+			}
+			transpose_rows.push(transpose_row);
+		}
+		Self::with_vec(transpose_rows)
+	}
+
+	pub fn triangularity(&self) -> Option<Triangularity> {
+		if !self.is_square() {
+			return None;
+		}
+		let mut is_upper_triangular = true;
+		let mut is_lower_triangular = true;
+		for i in 0..self.dims.num_rows {
+			for j in 0..self.dims.num_cols {
+				if j > i && self.get(i, j) != T::default() {
+					is_upper_triangular = false;
+				}
+				if j < i && self.get(i, j) != T::default() {
+					is_lower_triangular = false;
+				}
+			}
+		}
+		if is_upper_triangular && !is_lower_triangular {
+			return Some(Triangularity::UpperTriangular);
+		}
+		if is_lower_triangular && !is_upper_triangular {
+			return Some(Triangularity::LowerTriangular);
+		}
+		if is_upper_triangular && is_lower_triangular {
+			return Some(Triangularity::Diagonal);
+		}
+		None
+	}
+
+}
+
+impl<T> Matrix<T> where T: Default + PartialEq + Neg<Output=T> {
+
+	pub fn symmetry(&self) -> Option<Symmetry> {
+		if !self.is_square() {
+			return None;
+		}
+		let mut is_symmetric = true;
+		let mut is_skew = true;
+		let transpose = self.transpose();
+		for i in 0..self.dims.num_rows {
+			for j in 0..self.dims.num_cols {
+				if self.get(i, j) != transpose.get(i, j) {
+					is_symmetric = false;
+					if self.get(i, j) != -transpose.get(i, j) {
+						return None;
+					}
+				}
+			}
+		}
+		if is_symmetric {
+			return Some(Symmetry::Symmetric);
+		}
+		Some(Symmetry::Skew)
+	}
+
+}
+
+impl<T> PartialEq for Matrix<T> where T: PartialEq {
+	fn eq(&self, other: &Self) -> bool {
+		if self.dims != other.dims {
+			return false;
+		}
+		for i in 0..self.dims.num_rows {
+			for j in 0..self.dims.num_cols {
+				if self.get(i, j) != other.get(i, j) {
+					return false;
+				}
+			}
+		}
+		true
+	}
+}
+
+impl<T> Eq for Matrix<T> where T: PartialEq {}
+
+pub enum Triangularity {
+	Diagonal,
+	UpperTriangular,
+	LowerTriangular
+}
+
+pub enum Symmetry {
+	Symmetric,
+	Skew
+}
+
+
+#[cfg(test)]
+mod matrix {
+
+	use super::Matrix;
+
+	mod dims {
+
+		use super::Matrix;
+
+		mod null {
+
+			use super::Matrix;
+
+			#[test]
+			fn null_matrix() {
+				let m = Matrix::<usize>::new::<0, 0>([]);
+				assert!(m.dims.are(0, 0))
+			}
+
+			#[test]
+			fn null_rows() {
+				let m = Matrix::<usize>::new([[]]);
+				assert!(m.dims.are(0, 0))
+			}
+
+			#[test]
+			fn null_cols() {
+				let m = Matrix::<usize>::new([[], []]);
+				assert!(m.dims.are(0, 0))
+			}
+
+
+		}
+
+		mod zero {
+
+			use super::Matrix;
+
+			#[test]
+			fn square() {
+				let m = Matrix::new([
+					[0, 0],
+					[0, 0]
+				]);
+				assert!(m.dims.are(2, 2))
+			}
+
+			#[test]
+			fn row() {
+				let m = Matrix::new([[0, 0]]);
+				assert!(m.dims.are(1, 2))
+			}
+
+			#[test]
+			fn column() {
+				let m = Matrix::new([[0], [0]]);
+				assert!(m.dims.are(2, 1))
+			}
+
+		}
+
+		#[test]
+		fn standard() {
+			let m = Matrix::new([
+				[1, 2, 3],
+				[4, 5, 6],
+				[7, 8, 9],
+				[10, 11, 12]
+			]);
+			assert!(m.dims.are(4, 3))
+		}
+
+
+
+	}
+
+	mod get {
+
+		use super::Matrix;
+
+		mod null {
+
+			use super::Matrix;
+
+			#[test]
+			#[should_panic]
+			fn no_rows() {
+				let m = Matrix::<usize>::new::<0, 0>([]);
+				let _ = m.get(0, 0);
+			}
+
+			#[test]
+			#[should_panic]
+			fn no_cols() {
+				let m = Matrix::<usize>::new([[]]);
+				let _ = m.get(0, 0);
+			}
+
+		}
+
+		#[test]
+		fn square() {
+			let m = Matrix::new([
+				[1, 2],
+				[3, 4]
+			]);
+			assert_eq!(m.get(0, 0), 1);
+			assert_eq!(m.get(0, 1), 2);
+			assert_eq!(m.get(1, 0), 3);
+			assert_eq!(m.get(1, 1), 4)
+		}
+
+		#[test]
+		fn right_leaning() {
+			let m = Matrix::new([
+				[1, 2, 3],
+				[4, 5, 6]
+			]);
+			assert_eq!(m.get(0, 0), 1);
+			assert_eq!(m.get(0, 1), 2);
+			assert_eq!(m.get(0, 2), 3);
+			assert_eq!(m.get(1, 0), 4);
+			assert_eq!(m.get(1, 1), 5);
+			assert_eq!(m.get(1, 2), 6)
+		}
+
+		#[test]
+		fn top_heavy() {
+			let m = Matrix::new([
+				[1, 2],
+				[3, 4],
+				[5, 6]
+			]);
+			assert_eq!(m.get(0, 0), 1);
+			assert_eq!(m.get(0, 1), 2);
+			assert_eq!(m.get(1, 0), 3);
+			assert_eq!(m.get(1, 1), 4);
+			assert_eq!(m.get(2, 0), 5);
+			assert_eq!(m.get(2, 1), 6)
+		}
+
+		#[test]
+		#[should_panic]
+		fn overindex_row() {
+			let m = Matrix::new([
+				[1, 2],
+				[3, 4]
+			]);
+			let _ = m.get(2, 0);
+		}
+
+		#[test]
+		#[should_panic]
+		fn overindex_column() {
+			let m = Matrix::new([
+				[1, 2],
+				[3, 4]
+			]);
+			let _ = m.get(0, 2);
+		}
+
+	}
+
+}
