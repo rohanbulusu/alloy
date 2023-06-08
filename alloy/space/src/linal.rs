@@ -1202,6 +1202,52 @@ impl<T> Matrix<T> where T: Default + PartialEq {
 
 impl<T> Matrix<T> where T: Default + PartialEq + Neg<Output=T> {
 
+	/// Determines the symmetry properties of `self`.
+	///
+	/// If `self` is symmetric or skew-symmetric, then a `Some` value is
+	/// returned containing a [`Symmetry`] designation.
+	/// ```
+	/// # use crate::space::linal::{Matrix, Symmetry};
+	/// let m = Matrix::new([
+	/// 	[1, 2, 3],
+	/// 	[2, 3, 4],
+	/// 	[3, 4, 1]
+	/// ]);
+	/// assert!(matches![m.symmetry().unwrap(), Symmetry::Symmetric]);
+	/// ```
+	/// ```
+	/// # use crate::space::linal::{Matrix, Symmetry};
+	/// let m = Matrix::new([
+	/// 	[0, 2, 3],
+	/// 	[-2, 0, 4],
+	/// 	[-3, -4, 0]
+	/// ]);
+	/// assert!(matches![m.symmetry().unwrap(), Symmetry::Skew]);
+	/// ```
+	/// If `self` is neither symmetric or skew-symmetric, a `None` value is
+	/// emitted.
+	/// ```
+	/// # use crate::space::linal::{Matrix, Symmetry};
+	/// let m = Matrix::new([
+	/// 	[1, 2, 3],
+	/// 	[2, 0, 4],
+	/// 	[4, 4, 1]
+	/// ]);
+	/// assert!(m.symmetry().is_none());
+	/// ```
+	/// The last item of note is a further detail of the mathematical notion
+	/// of matrix symmetry, which requires that matrices must be square to be
+	/// in any state of symmetry. Accordingly, non-square values of `self` also
+	/// emit a `None`.
+	/// ```
+	/// # use crate::space::linal::Matrix;
+	/// let m = Matrix::new([
+	/// 	[1, 2, 0, 4],
+	/// 	[2, 1, 1, 2],
+	/// 	[4, 0, 2, 1]
+	/// ]);
+	/// assert!(m.symmetry().is_none());
+	/// ```
 	pub fn symmetry(&self) -> Option<Symmetry> {
 		if !self.is_square() {
 			return None;
