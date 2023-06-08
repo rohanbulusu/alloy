@@ -1106,7 +1106,7 @@ impl<T> Matrix<T> where T: Default + PartialEq {
 	/// ```
 	/// If `self` does not have a triangularity designation (ie. it is not
 	/// uppper-triangular, lower-triangular, or diagonal), a `None` is returned
-	/// to indicate there is no `Triangularity` enum value matching its type.
+	/// to indicate there is no `Triangularity` value matching its type.
 	/// ```
 	/// # use crate::space::linal::{Matrix, Triangularity};
 	/// let m = Matrix::new([
@@ -1167,6 +1167,7 @@ impl<T> Matrix<T> where T: Default + PartialEq {
 	/// ]);
 	///
 	/// let quirky_triangularity = quirky_diagonal.triangularity().unwrap();
+	///
 	/// assert!(matches![quirky_triangularity, Triangularity::Diagonal]);
 	/// ```
 	pub fn triangularity(&self) -> Option<Triangularity> {
@@ -1263,8 +1264,8 @@ pub enum Triangularity {
 /// Markers for the symmetry of a [`Matrix`].
 ///
 /// Given a square matrix, there are two symmetry properties it can exhibit
-/// (assuming it exhibits any at all). If some `Matrix` _A_ is symmetric (ie.
-/// `Symmetric`), we have that _A_ = _A_<sup>T<sup>. If _A_ = -_A_<sup>T<sup>,
+/// (assuming it exhibits any at all). If some matrix _A_ is symmetric (ie.
+/// `Symmetric`), we have that _A_ = _A_<sup>T</sup>. If _A_ = -_A_<sup>T</sup>,
 /// then _A_ is said to be skew-symmetric (ie. `Skew`).
 pub enum Symmetry {
 	/// Marks a symmetric `Matrix`.
