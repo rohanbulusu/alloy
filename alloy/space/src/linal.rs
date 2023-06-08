@@ -1207,21 +1207,25 @@ impl<T> Matrix<T> where T: Default + PartialEq + Neg<Output=T> {
 			return None;
 		}
 		let mut is_symmetric = true;
+		let mut is_skew = true;
 		let transpose = self.transpose();
 		for i in 0..self.dims.num_rows {
 			for j in 0..self.dims.num_cols {
 				if self.get(i, j) != transpose.get(i, j) {
 					is_symmetric = false;
-					if self.get(i, j) != -transpose.get(i, j) {
-						return None;
-					}
+				}
+				if self.get(i, j) != -transpose.get(i, j) {
+					is_skew = false;
 				}
 			}
 		}
 		if is_symmetric {
 			return Some(Symmetry::Symmetric);
 		}
-		Some(Symmetry::Skew)
+		if is_skew {
+			return Some(Symmetry::Skew);
+		}
+		None
 	}
 
 }
