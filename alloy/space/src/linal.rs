@@ -1078,10 +1078,10 @@ impl<T> Matrix<T> where T: Default + PartialEq {
 		let mut is_lower_triangular = true;
 		for i in 0..self.dims.num_rows {
 			for j in 0..self.dims.num_cols {
-				if j > i && self.get(i, j) != T::default() {
+				if j < i && self.get(i, j) != T::default() {
 					is_upper_triangular = false;
 				}
-				if j < i && self.get(i, j) != T::default() {
+				if j > i && self.get(i, j) != T::default() {
 					is_lower_triangular = false;
 				}
 			}
