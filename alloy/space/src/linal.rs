@@ -1070,6 +1070,105 @@ impl<T> Matrix<T> where T: Default + PartialEq {
 		Self::with_vec(transpose_rows)
 	}
 
+	/// Determines the triangularity properties of `self`.
+	///
+	/// If `self` is upper-triangular, lower-triangular, or just diagonal, then
+	/// a `Some` value is returned containing a [`Triangularity`] designation.
+	/// ```
+	/// # use crate::space::linal::{Matrix, Triangularity};
+	/// let m = Matrix::new([
+	/// 	[1, 0, 0],
+	/// 	[2, 3, 0],
+	/// 	[5, 3, 1]
+	/// ]);
+	/// let triangularity: Triangularity = m.triangularity().unwrap();
+	/// assert!(matches![triangularity, Triangularity::LowerTriangular]);
+	/// ```
+	/// ```
+	/// # use crate::space::linal::{Matrix, Triangularity};
+	/// let m = Matrix::new([
+	/// 	[1, 2, 3],
+	/// 	[0, 3, 4],
+	/// 	[0, 0, 1]
+	/// ]);
+	/// let triangularity: Triangularity = m.triangularity().unwrap();
+	/// assert!(matches![triangularity, Triangularity::UpperTriangular]);
+	/// ```
+	/// ```
+	/// # use crate::space::linal::{Matrix, Triangularity};
+	/// let m = Matrix::new([
+	/// 	[1, 0, 0],
+	/// 	[0, 3, 0],
+	/// 	[0, 0, 4]
+	/// ]);
+	/// let triangularity: Triangularity = m.triangularity().unwrap();
+	/// assert!(matches![triangularity, Triangularity::Diagonal]);
+	/// ```
+	/// If `self` does not have a triangularity designation (ie. it is not
+	/// uppper-triangular, lower-triangular, or diagonal), a `None` is returned
+	/// to indicate there is no `Triangularity` enum value matching its type.
+	/// ```
+	/// # use crate::space::linal::{Matrix, Triangularity};
+	/// let m = Matrix::new([
+	/// 	[1, 2, 3],
+	/// 	[0, 3, 4],
+	/// 	[4, 0, 1]
+	/// ]);
+	/// assert!(m.triangularity().is_none());
+	/// ```
+	/// There are two other important things to note here. The first is a
+	/// further detail of the mathematical notion of matrix triangularity,
+	/// which requires that matrices must be square to be in any state of
+	/// triangularity. Accordingly, non-square values of `self` recieve a
+	/// `None` classification.
+	/// ```
+	/// # use crate::space::linal::{Matrix, Triangularity};
+	/// let m = Matrix::new([
+	/// 	[1, 2, 3, 4],
+	/// 	[0, 3, 4, 2],
+	/// 	[0, 0, 1, 8]
+	/// ]);
+	/// assert!(m.triangularity().is_none());
+	/// ```
+	/// The last item of note is on the implementation of this method.
+	/// Because triangularity at its heart rests on a distinction between zero
+	/// and non-zero values and `T` is a generic type, `T::default()` is used
+	/// to be the definitive notion of zero for `T`. This can have unintended
+	/// consequences.
+	/// ```
+	/// # use crate::space::linal::{Matrix, Triangularity};
+	/// #[derive(PartialEq)]
+	/// struct Wrapper {
+	///		inner: u8
+	/// }
+	///
+	/// impl Wrapper {
+	///		pub fn new(inner: u8) -> Self {
+	///			 Self { inner }
+	///		}
+	/// }
+	///
+	/// impl Default for Wrapper {
+	///		fn default() -> Self {
+	///			Self::new(1)
+	/// 	}
+	/// }
+	///
+	/// let attempted_diagonal = Matrix::new([
+	/// 	[Wrapper::new(1), Wrapper::new(0)],
+	///		[Wrapper::new(0), Wrapper::new(4)]
+	/// ]);
+	///
+	/// assert!(attempted_diagonal.triangularity().is_none());
+	///
+	/// let quirky_diagonal = Matrix::new([
+	/// 	[Wrapper::new(4), Wrapper::new(1)],
+	/// 	[Wrapper::new(1), Wrapper::new(2)]
+	/// ]);
+	///
+	/// let quirky_triangularity = quirky_diagonal.triangularity().unwrap();
+	/// assert!(matches![quirky_triangularity, Triangularity::Diagonal]);
+	/// ```
 	pub fn triangularity(&self) -> Option<Triangularity> {
 		if !self.is_square() {
 			return None;
