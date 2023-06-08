@@ -1122,7 +1122,7 @@ impl<T> Matrix<T> where T: Default + PartialEq {
 	/// triangularity. Accordingly, non-square values of `self` recieve a
 	/// `None` classification.
 	/// ```
-	/// # use crate::space::linal::{Matrix, Triangularity};
+	/// # use crate::space::linal::Matrix;
 	/// let m = Matrix::new([
 	/// 	[1, 2, 3, 4],
 	/// 	[0, 3, 4, 2],
