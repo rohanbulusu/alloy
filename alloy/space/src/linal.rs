@@ -1,6 +1,6 @@
 //! Linear algebra support.
 
-use std::ops::{Add, Sub, Mul, Div, Neg};
+use std::ops::{Add, Sub, Mul, Div, Neg, Index};
 
 /// Vector implementation for elements of type `T`.
 pub struct Vector<T> {
@@ -787,6 +787,26 @@ impl MatrixDimensions {
 		self.num_rows == candidate_rows && self.num_cols == candidate_cols
 	}
 
+	/// Returns whether or not the matrix described by `self` is able to be
+	/// right-multiplied by the matrix described by `other`.
+	///
+	/// # Examples
+	/// ```
+	/// # use crate::space::linal::MatrixDimensions;
+	/// let a = MatrixDimensions::new(3, 2);
+	/// let b = MatrixDimensions::new(2, 4);
+	/// assert!(a.multiplies_with(&b));
+	/// ```
+	/// ```
+	/// # use crate::space::linal::MatrixDimensions;
+	/// let c = MatrixDimensions::new(2, 3);
+	/// let d = MatrixDimensions::new(1, 3);
+	/// assert!(!c.multiplies_with(&d));
+	/// ```
+	pub fn multiplies_with(&self, other: &Self) -> bool {
+		self.num_cols == other.num_rows
+	}
+
 }
 
 /// Matrix implementation for elements of type `T`.
@@ -977,6 +997,85 @@ impl<T> Matrix<T> {
 		self.dims.num_cols == 1
 	}
 
+	/// Returns whether or not `self` has the same dimensionality as `other`.
+	///
+	/// # Examples
+	/// ```
+	/// # use crate::space::linal::Matrix;
+	/// let a = Matrix::new([[0, 1], [1, 0]]);
+	/// let b = Matrix::new([[1, 0], [0, 1]]);
+	/// assert!(a.summable_with(&b));
+	/// ```
+	/// ```
+	/// # use crate::space::linal::Matrix;
+	/// let c = Matrix::new([[1, 2]]);
+	/// let d = Matrix::new([[1], [2]]);
+	/// assert!(!c.summable_with(&d));
+	/// ```
+	pub fn summable_with(&self, other: &Self) -> bool {
+		self.dims == other.dims
+	}
+
+	/// Returns an iterator over the rows of `self`.
+	///
+	/// # Examples
+	/// ```
+	/// # use crate::space::linal::Matrix;
+	/// let m = Matrix::new([[1, 2], [3, 4]]);
+	/// for (i, row) in m.rows().enumerate() {
+	/// 	assert_eq!(row[0], 2*i + 1);
+	/// 	assert_eq!(row[1], 2*i + 2);
+	/// }
+	/// ```
+	pub fn rows<'a>(&'a self) -> MatrixRows<'a, T> {
+		MatrixRows::new(&self.ptr, self.dims.num_rows, self.dims.num_cols)
+	}
+
+	/// Returns an iterator over the columns of `self`.
+	///
+	/// # Examples
+	/// ```
+	/// # use crate::space::linal::Matrix;
+	/// let m = Matrix::new([[1, 2], [3, 4]]);
+	/// for (i, col) in m.cols().enumerate() {
+	/// 	assert_eq!(col[0], i + 1);
+	/// 	assert_eq!(col[1], i + 3);
+	/// }
+	/// ```
+	pub fn cols<'b>(&'b self) -> MatrixCols<'b, T> {
+		MatrixCols::new(&self.ptr, self.dims.num_cols, self.dims.num_rows)
+	}
+
+	/// Returns the transpose of `self`.
+	///
+	/// This is just the standard transpose, both for square and non-square
+	/// matrices.
+	///
+	/// # Examples
+	/// ```
+	/// # use crate::space::linal::Matrix;
+	/// let m = Matrix::new([[1, 2], [3, 4]]);
+	/// let transposed_m = Matrix::new([[1, 3], [2, 4]]);
+	/// assert_eq!(m.transpose(), transposed_m);
+	/// ```
+	/// ```
+	/// # use crate::space::linal::Matrix;
+	/// let m = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+	/// let transposed_m = Matrix::new([[1, 4], [2, 5], [3, 6]]);
+	/// assert_eq!(m.transpose(), transposed_m);
+	/// ```
+	pub fn transpose(&self) -> Self {
+		let mut transpose_rows: Vec<Vec<T>> = Vec::with_capacity(self.dims.num_cols);
+		for j in 0..self.dims.num_cols {
+			let mut transpose_row: Vec<T> = Vec::with_capacity(self.dims.num_rows);
+			for i in 0..self.dims.num_rows {
+				transpose_row.push(self.get(i, j));
+			}
+			transpose_rows.push(transpose_row);
+		}
+		Self::with_vec(transpose_rows)
+	}
+
 }
 
 impl<T> Matrix<T> where T: Default + PartialEq {
@@ -1047,34 +1146,6 @@ impl<T> Matrix<T> where T: Default + PartialEq {
 			}
 		}
 		true
-	}
-
-	/// Returns the transpose of `self`.
-	///
-	/// This is just the standard transpose, both for square and non-square
-	/// matrices.
-	/// ```
-	/// # use crate::space::linal::Matrix;
-	/// let m = Matrix::new([[1, 2], [3, 4]]);
-	/// let transposed_m = Matrix::new([[1, 3], [2, 4]]);
-	/// assert_eq!(m.transpose(), transposed_m);
-	/// ```
-	/// ```
-	/// # use crate::space::linal::Matrix;
-	/// let m = Matrix::new([[1, 2, 3], [4, 5, 6]]);
-	/// let transposed_m = Matrix::new([[1, 4], [2, 5], [3, 6]]);
-	/// assert_eq!(m.transpose(), transposed_m);
-	/// ```
-	pub fn transpose(&self) -> Self {
-		let mut transpose_rows: Vec<Vec<T>> = Vec::with_capacity(self.dims.num_cols);
-		for j in 0..self.dims.num_cols {
-			let mut transpose_row: Vec<T> = Vec::with_capacity(self.dims.num_rows);
-			for i in 0..self.dims.num_rows {
-				transpose_row.push(self.get(i, j));
-			}
-			transpose_rows.push(transpose_row);
-		}
-		Self::with_vec(transpose_rows)
 	}
 
 	/// Determines the triangularity properties of `self`.
@@ -1249,6 +1320,80 @@ impl<T> Matrix<T> where T: Add<Output=T> {
 
 }
 
+impl<T> Matrix<T> where T: Default + PartialEq + Add<Output=T> {
+
+	/// Determines the dimensionality of the null space of `self`.
+	///
+	/// If the sum of the values of any row is zero, this adds to the
+	/// dimensionality of the null space of `self`. 
+	///
+	/// # Warning
+	/// Null space not located in the linear subspace spanned by the 
+	/// basis vectors of `self` is not yet accounted for in the algorithm
+	/// utilized here.
+	///
+	/// # Examples
+	/// ```
+	/// # use crate::space::linal::Matrix;
+	/// let m = Matrix::new([[1, 0], [1, -1]]);
+	/// assert_eq!(m.null_dim(), 1);
+	/// ```
+	/// ```
+	/// # use crate::space::linal::Matrix;
+	/// let m = Matrix::new([[1, 1, 3], [-1, -1, 2]]);
+	/// assert_eq!(m.null_dim(), 2);
+	/// ```
+	/// # use crate::space::linal::Matrix;
+	/// let m = Matrix::new([[1, 1], [1, -1], [4, 3]]);
+	/// assert_eq!(m.null_dim(), 1);
+	/// ```
+	pub fn null_dim(&self) -> usize {
+		let mut null_dimensionality = if self.dims.num_cols > self.dims.num_rows {
+			self.dims.num_cols - self.dims.num_rows
+		} else {
+			0
+		};
+		for row in self.rows() {
+			let mut row_sum = T::default();
+			for element in row.into_iter() {
+				row_sum = row_sum + element;
+			}
+			if row_sum == T::default() {
+				null_dimensionality += 1;
+			}
+		}
+		null_dimensionality
+	}
+
+	/// Determines the rank of `self`.
+	///
+	/// The output dimensionality of `self` is exactly equivalent to the
+	/// difference of the number of columns in `self` and the dimensionality
+	/// of its null space.
+	/// 
+	/// # Examples
+	/// ```
+	/// # use crate::space::linal::Matrix;
+	/// let m = Matrix::new([[1, 0], [1, -1]]);
+	/// assert_eq!(m.rank(), 1);
+	/// ```
+	/// ```
+	/// # use crate::space::linal::Matrix;
+	/// let m = Matrix::new([[1, 1, 3], [-1, -1, 2]]);
+	/// assert_eq!(m.rank(), 1);
+	/// ```
+	/// # use crate::space::linal::Matrix;
+	/// let m = Matrix::new([[1, 1], [1, -1], [4, 3]]);
+	/// assert_eq!(m.rank(), 2);
+	/// ```
+	pub fn rank(&self) -> usize {
+		// `self.null_dim` is always guaranteed to be less than or equal to the
+		//  number of rows in `self`
+		self.dims.num_cols - self.null_dim()
+	}
+
+}
+
 impl<T> Matrix<T> where T: Default + PartialEq + Neg<Output=T> {
 
 	/// Determines the symmetry properties of `self`.
@@ -1341,6 +1486,118 @@ impl<T> PartialEq for Matrix<T> where T: PartialEq {
 	}
 }
 
+impl<T> Add for Matrix<T> where T: Add<Output=T> {
+	type Output = Self;
+	fn add(self, other: Self) -> Self {
+		if !self.summable_with(&other) {
+			panic!("Addition can only occur between matrices of the same dimension")
+		}
+		let mut sum_components = Vec::with_capacity(self.dims.num_rows);
+		for i in 0..self.dims.num_rows {
+			let mut row = Vec::with_capacity(self.dims.num_cols);
+			for j in 0..self.dims.num_cols {
+				row.push(self.get(i, j) + other.get(i, j));
+			}
+			sum_components.push(row);
+		}
+		Self::with_vec(sum_components)
+	}
+}
+
+impl<T> Sub for Matrix<T> where T: Sub<Output=T> {
+	type Output = Self;
+	fn sub(self, other: Self) -> Self {
+		if !self.summable_with(&other) {
+			panic!("Subtraction can only occur between matrices of the same dimension")
+		}
+		let mut difference_components = Vec::with_capacity(self.dims.num_rows);
+		for i in 0..self.dims.num_rows {
+			let mut row = Vec::with_capacity(self.dims.num_cols);
+			for j in 0..self.dims.num_cols {
+				row.push(self.get(i, j) - other.get(i, j));
+			}
+			difference_components.push(row);
+		}
+		Self::with_vec(difference_components)
+	}
+}
+
+/// Computes `Matrix`-`Matrix` products.
+impl<T> Mul for Matrix<T> where T: Copy + Sub<Output=T> + Add<Output=T> + Mul<Output=T> {
+	type Output = Self;
+	fn mul(self, other: Self) -> Self {
+		if !self.dims.multiplies_with(&other.dims) {
+			panic!("Matrices do not have compatible dimensions for multiplication")
+		}
+		let zero = self.get(0, 0) - self.get(0, 0);
+		let mut product = vec![vec![zero; self.dims.num_rows]; other.dims.num_cols];
+		for i in 0..self.dims.num_rows {
+			for j in 0..other.dims.num_cols {
+				let mut sum = zero;
+				for k in 0..self.dims.num_cols {
+					sum = sum + self.get(i, k)*other.get(k, j);
+				}
+				product[i][j] = sum;
+			}
+		}
+		Self::with_vec(product)
+	}
+}
+
+/// Computes `Matrix`-[`Vector`] products.
+impl<T> Mul<Vector<T>> for Matrix<T> where T: Add<Output=T> + Mul<Output=T> {
+	type Output = Self;
+	fn mul(self, other: Vector<T>) -> Self {
+		todo!()	
+	}
+}
+
+/// Computes scalar-`Matrix` products.
+impl<T> Mul<T> for Matrix<T> where T: Copy + Mul<Output=T> {
+	type Output = Self;
+	fn mul(self, other: T) -> Self {
+		let mut difference_components = Vec::with_capacity(self.dims.num_rows);
+		for i in 0..self.dims.num_rows {
+			let mut row = Vec::with_capacity(self.dims.num_cols);
+			for j in 0..self.dims.num_cols {
+				row.push(self.get(i, j) * other);
+			}
+			difference_components.push(row);
+		}
+		Self::with_vec(difference_components)
+	}
+}
+
+impl<T> Div<T> for Matrix<T> where T: Copy + Div<Output=T> {
+	type Output = Self;
+	fn div(self, other: T) -> Self {
+		let mut difference_components = Vec::with_capacity(self.dims.num_rows);
+		for i in 0..self.dims.num_rows {
+			let mut row = Vec::with_capacity(self.dims.num_cols);
+			for j in 0..self.dims.num_cols {
+				row.push(self.get(i, j) / other);
+			}
+			difference_components.push(row);
+		}
+		Self::with_vec(difference_components)
+	}
+}
+
+impl<T> Neg for Matrix<T> where T: Neg<Output=T> {
+	type Output = Self;
+	fn neg(self) -> Self {
+		let mut difference_components = Vec::with_capacity(self.dims.num_rows);
+		for i in 0..self.dims.num_rows {
+			let mut row = Vec::with_capacity(self.dims.num_cols);
+			for j in 0..self.dims.num_cols {
+				row.push(-self.get(i, j));
+			}
+			difference_components.push(row);
+		}
+		Self::with_vec(difference_components)
+	}
+}
+
 impl<T> Eq for Matrix<T> where T: PartialEq {}
 
 /// Markers for the triangularity of a [`Matrix`].
@@ -1373,6 +1630,82 @@ pub enum Symmetry {
 	Skew
 }
 
+pub struct MatrixRows<'a, T> {
+	ptr: &'a std::ptr::NonNull<T>,
+	num_rows: usize,
+	elements_per_row: usize,
+	index: usize
+}
+
+impl<'a, T> MatrixRows<'a, T> {
+
+	pub fn new(ptr: &'a std::ptr::NonNull<T>, num_rows: usize, elements_per_row: usize) -> Self {
+		Self {
+			ptr,
+			num_rows,
+			elements_per_row,
+			index: 0
+		}
+	}
+
+}
+
+impl<'a, T> Iterator for MatrixRows<'a, T> {
+	type Item = Vec<T>;
+	fn next(&mut self) -> Option<Vec<T>> {
+		if self.index >= self.num_rows {
+			return None;
+		}
+		let mut next_row = Vec::with_capacity(self.elements_per_row);
+		for i in 0..self.elements_per_row {
+			let element = unsafe { 
+				std::ptr::read(self.ptr.as_ptr().add(self.index*self.elements_per_row + i))
+			};
+			next_row.push(element);
+		}
+		self.index += 1;
+		Some(next_row)
+	}
+}
+
+pub struct MatrixCols<'a, T> {
+	ptr: &'a std::ptr::NonNull<T>,
+	num_cols: usize,
+	elements_per_col: usize,
+	index: usize
+}
+
+
+impl<'a, T> MatrixCols<'a, T> {
+
+	pub fn new(ptr: &'a std::ptr::NonNull<T>, num_cols: usize, elements_per_col: usize) -> Self {
+		Self {
+			ptr,
+			num_cols,
+			elements_per_col,
+			index: 0
+		}
+	}
+
+}
+
+impl<'a, T> Iterator for MatrixCols<'a, T> {
+	type Item = Vec<T>;
+	fn next(&mut self) -> Option<Vec<T>> {
+		if self.index >= self.num_cols {
+			return None;
+		}
+		let mut next_col = Vec::with_capacity(self.elements_per_col);
+		for i in 0..self.elements_per_col {
+			let element = unsafe {
+				std::ptr::read(self.ptr.as_ptr().add(self.index + self.elements_per_col*i))
+			};
+			next_col.push(element);
+		}
+		self.index += 1;
+		Some(next_col)
+	}
+}
 
 #[cfg(test)]
 mod matrix {
