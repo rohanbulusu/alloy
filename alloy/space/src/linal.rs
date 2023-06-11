@@ -1473,6 +1473,10 @@ impl<T> Matrix<T> where T: Default + PartialEq + Neg<Output=T> {
 
 }
 
+unsafe impl<T> Send for Matrix<T> where T: Send {}
+
+unsafe impl<T> Sync for Matrix<T> where T: Sync {}
+
 impl<T> PartialEq for Matrix<T> where T: PartialEq {
 	fn eq(&self, other: &Self) -> bool {
 		if self.dims != other.dims {
