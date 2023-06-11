@@ -1632,6 +1632,7 @@ pub enum Symmetry {
 	Skew
 }
 
+/// An iterator over a given [`Matrix`]'s rows.
 pub struct MatrixRows<'a, T> {
 	ptr: &'a std::ptr::NonNull<T>,
 	num_rows: usize,
@@ -1641,6 +1642,7 @@ pub struct MatrixRows<'a, T> {
 
 impl<'a, T> MatrixRows<'a, T> {
 
+	/// Constructs a new `MatrixRows` from relevant `Matrix` information.
 	pub fn new(ptr: &'a std::ptr::NonNull<T>, num_rows: usize, elements_per_row: usize) -> Self {
 		Self {
 			ptr,
@@ -1670,6 +1672,7 @@ impl<'a, T> Iterator for MatrixRows<'a, T> {
 	}
 }
 
+/// An iterator over a given [`Matrix`]'s columns.
 pub struct MatrixCols<'a, T> {
 	ptr: &'a std::ptr::NonNull<T>,
 	num_cols: usize,
@@ -1680,6 +1683,7 @@ pub struct MatrixCols<'a, T> {
 
 impl<'a, T> MatrixCols<'a, T> {
 
+	/// Constructs a new `MatrixCols` from relevant `Matrix` information.
 	pub fn new(ptr: &'a std::ptr::NonNull<T>, num_cols: usize, elements_per_col: usize) -> Self {
 		Self {
 			ptr,
