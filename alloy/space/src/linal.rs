@@ -1389,8 +1389,9 @@ impl<T> Matrix<T> where T: Default + PartialEq + Add<Output=T> {
 	/// assert_eq!(m.rank(), 2);
 	/// ```
 	pub fn rank(&self) -> usize {
-		// `self.null_dim` is always guaranteed to be less than or equal to the
-		//  number of rows in `self`
+		if self.dims.num_rows > self.dims.num_cols {
+			return self.dims.num_rows - self.null_dim();
+		}
 		self.dims.num_cols - self.null_dim()
 	}
 
