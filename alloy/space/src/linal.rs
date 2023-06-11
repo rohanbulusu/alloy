@@ -1,6 +1,6 @@
 //! Linear algebra support.
 
-use std::ops::{Add, Sub, Mul, Div, Neg, Index};
+use std::ops::{Add, Sub, Mul, Div, Neg};
 
 /// Vector implementation for elements of type `T`.
 pub struct Vector<T> {
