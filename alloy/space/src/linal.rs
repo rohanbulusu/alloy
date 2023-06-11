@@ -1343,6 +1343,7 @@ impl<T> Matrix<T> where T: Default + PartialEq + Add<Output=T> {
 	/// let m = Matrix::new([[1, 1, 3], [-1, -1, 2]]);
 	/// assert_eq!(m.null_dim(), 2);
 	/// ```
+	/// ```
 	/// # use crate::space::linal::Matrix;
 	/// let m = Matrix::new([[1, 1], [1, -1], [4, 3]]);
 	/// assert_eq!(m.null_dim(), 1);
@@ -1381,6 +1382,7 @@ impl<T> Matrix<T> where T: Default + PartialEq + Add<Output=T> {
 	/// # use crate::space::linal::Matrix;
 	/// let m = Matrix::new([[1, 1, 3], [-1, -1, 2]]);
 	/// assert_eq!(m.rank(), 1);
+	/// ```
 	/// ```
 	/// # use crate::space::linal::Matrix;
 	/// let m = Matrix::new([[1, 1], [1, -1], [4, 3]]);
