@@ -1567,6 +1567,7 @@ impl<T> Mul<Vector<T>> for Matrix<T> where T: Copy + Sub<Output=T> + Add<Output=
 			}
 			product[i] = sum;
 		}
+		Self::with_vec(vec![product])
 	}
 }
 
@@ -1888,6 +1889,87 @@ mod matrix {
 				[3, 4]
 			]);
 			let _ = m.get(0, 2);
+		}
+
+	}
+
+	mod addition {
+
+		use super::Matrix;
+
+		mod zero {
+
+			use super::Matrix;
+
+			mod square {
+
+				use super::Matrix;
+
+				#[test]
+				fn left_identity() {
+					let zero = Matrix::new([[0, 0], [0, 0]]);
+					let m = Matrix::new([[1, 2], [3, 4]]);
+					let expected = Matrix::new([[1, 2], [3, 4]]);
+					assert_eq!(zero + m, expected)
+				}
+
+				#[test]
+				fn right_identity() {
+					let zero = Matrix::new([[0, 0], [0, 0]]);
+					let m = Matrix::new([[1, 2], [3, 4]]);
+					let expected = Matrix::new([[1, 2], [3, 4]]);
+					assert_eq!(m + zero, expected)
+				}
+
+			}
+
+			mod horizontal_rectangular {
+
+				use super::Matrix;
+
+				#[test]
+				fn left_identity() {
+					let zero = Matrix::new([[0, 0], [0, 0]]);
+					let m = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+					let expected = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+					assert_eq!(zero + m, expected)
+				}
+
+				#[test]
+				fn right_identity() {
+					let zero = Matrix::new([[0, 0], [0, 0]]);
+					let m = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+					let expected = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+					assert_eq!(m + zero, expected)
+				}
+
+				
+
+			}
+
+			mod vertical_rectangular {
+
+				use super::Matrix;
+
+				#[test]
+				fn left_identity() {
+					let zero = Matrix::new([[0, 0], [0, 0]]);
+					let m = Matrix::new([[1, 2], [3, 4], [5, 6]]);
+					let expected = Matrix::new([[1, 2], [3, 4], [5, 6]]);
+					assert_eq!(zero + m, expected)
+				}
+
+				#[test]
+				fn right_identity() {
+					let zero = Matrix::new([[0, 0], [0, 0]]);
+					let m = Matrix::new([[1, 2], [3, 4], [5, 6]]);
+					let expected = Matrix::new([[1, 2], [3, 4], [5, 6]]);
+					assert_eq!(m + zero, expected)
+				}
+
+
+			}
+
 		}
 
 	}
