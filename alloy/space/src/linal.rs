@@ -5,7 +5,8 @@ use std::ops::{Add, Sub, Mul, Div, Neg};
 /// Vector implementation for elements of type `T`.
 pub struct Vector<T> {
 	ptr: std::ptr::NonNull<T>,
-	dim: usize
+	/// Dimensionality of the `Vector`
+	pub dim: usize
 }
 
 impl<T> Vector<T> {
