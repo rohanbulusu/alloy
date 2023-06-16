@@ -1753,7 +1753,7 @@ impl<'a, T> Iterator for MatrixCols<'a, T> {
 #[cfg(test)]
 mod matrix {
 
-	use super::Matrix;
+	use super::{Matrix, Vector};
 
 	mod dims {
 
@@ -2221,6 +2221,101 @@ mod matrix {
 			assert_eq!(m * 2, product)
 		}
 
+	}
+
+	mod vector_multiplication {
+
+		use super::{Matrix, Vector};
+
+		mod zero_matrix {
+
+			use super::{Matrix, Vector};
+
+			#[test]
+			fn by_zero() {
+				let zero = Matrix::new([[0, 0], [0, 0]]);
+				let product = Vector::new([0, 0]);
+				assert_eq!(zero * Vector::new([1, 2]), product)
+			}
+
+			#[test]
+			fn by_arbitrary() {
+				let zero = Matrix::new([[0, 0], [0, 0]]);
+				let product = Vector::new([0, 0]);
+				assert_eq!(zero * Vector::new([1, 2]), product)
+			}
+
+		}
+
+		#[test]
+		fn square() {
+			let m = Matrix::new([[1, 2], [3, 4]]);
+			let v = Vector::new([1, 2]);
+			assert_eq!(m * v, Vector::new([5, 11]))
+		}
+
+		#[test]
+		fn horizontal_rectangular() {
+			let m = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+			let v = Vector::new([1, 2, 3]);
+			assert_eq!(m * v, Vector::new([14, 32]))
+		}
+
+		#[test]
+		fn vertical_rectangular() {
+			let m = Matrix::new([[1, 2], [3, 4], [5, 6]]);
+			let v = Vector::new([1, 2]);
+			assert_eq!(m * v, Vector::new([5, 11, 17]))
+		}
+
+	}
+
+	mod scalar_division {
+
+		use super::Matrix;
+
+		mod zero_matrix {
+
+			use super::Matrix;
+
+			#[test]
+			#[should_panic]
+			fn by_zero() {
+				let zero = Matrix::new([[0, 0], [0, 0]]);
+				let product = Matrix::new([[0, 0], [0, 0]]);
+				assert_eq!(zero / 0, product)
+			}
+
+			#[test]
+			fn by_arbitrary() {
+				let zero = Matrix::new([[0, 0], [0, 0]]);
+				let product = Matrix::new([[0, 0], [0, 0]]);
+				assert_eq!(zero / 5, product)
+			}
+
+		}
+
+		#[test]
+		fn standard() {
+			let m = Matrix::new([[2, 4], [6, 8]]);
+			let dividend = Matrix::new([[1, 2], [3, 4]]);
+			assert_eq!(m / 2, dividend)
+		}
+
+		#[test]
+		fn horizontal_rectangular() {
+			let m = Matrix::new([[2, 4, 6], [8, 10, 12]]);
+			let dividend = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+			assert_eq!(m / 2, dividend)
+		}
+
+		#[test]
+		fn vertical_rectangular() {
+			let m = Matrix::new([[2, 4], [6, 8], [10, 12]]);
+			let dividend = Matrix::new([[1, 2], [3, 4], [5, 6]]);
+			assert_eq!(m / 2, dividend)
+		}
+		
 	}
 
 }
