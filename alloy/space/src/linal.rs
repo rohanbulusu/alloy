@@ -1929,7 +1929,7 @@ mod matrix {
 
 				#[test]
 				fn left_identity() {
-					let zero = Matrix::new([[0, 0], [0, 0]]);
+					let zero = Matrix::new([[0, 0, 0], [0, 0, 0]]);
 					let m = Matrix::new([[1, 2, 3], [4, 5, 6]]);
 					let expected = Matrix::new([[1, 2, 3], [4, 5, 6]]);
 					assert_eq!(zero + m, expected)
@@ -1937,7 +1937,7 @@ mod matrix {
 
 				#[test]
 				fn right_identity() {
-					let zero = Matrix::new([[0, 0], [0, 0]]);
+					let zero = Matrix::new([[0, 0, 0], [0, 0, 0]]);
 					let m = Matrix::new([[1, 2, 3], [4, 5, 6]]);
 					let expected = Matrix::new([[1, 2, 3], [4, 5, 6]]);
 					assert_eq!(m + zero, expected)
@@ -1953,7 +1953,7 @@ mod matrix {
 
 				#[test]
 				fn left_identity() {
-					let zero = Matrix::new([[0, 0], [0, 0]]);
+					let zero = Matrix::new([[0, 0], [0, 0], [0, 0]]);
 					let m = Matrix::new([[1, 2], [3, 4], [5, 6]]);
 					let expected = Matrix::new([[1, 2], [3, 4], [5, 6]]);
 					assert_eq!(zero + m, expected)
@@ -1961,7 +1961,7 @@ mod matrix {
 
 				#[test]
 				fn right_identity() {
-					let zero = Matrix::new([[0, 0], [0, 0]]);
+					let zero = Matrix::new([[0, 0], [0, 0], [0, 0]]);
 					let m = Matrix::new([[1, 2], [3, 4], [5, 6]]);
 					let expected = Matrix::new([[1, 2], [3, 4], [5, 6]]);
 					assert_eq!(m + zero, expected)
@@ -1970,6 +1970,235 @@ mod matrix {
 
 			}
 
+		}
+
+		#[test]
+		fn square() {
+			let a = Matrix::new([[1, 2], [3, 4]]);
+			let b = Matrix::new([[5, 6], [7, 8]]);
+			let sum = Matrix::new([[6, 8], [10, 12]]);
+			assert_eq!(a + b, sum)
+		}
+
+		#[test]
+		fn horizontal_rectangular() {
+			let a = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+			let b = Matrix::new([[7, 8, 9], [10, 11, 12]]);
+			let sum = Matrix::new([[8, 10, 12], [14, 16, 18]]);
+			assert_eq!(a + b, sum)
+		}
+
+		#[test]
+		fn vertical_rectangular() {
+			let a = Matrix::new([[1, 2], [3, 4], [5, 6]]);
+			let b = Matrix::new([[7, 8], [9, 10], [11, 12]]);
+			let sum = Matrix::new([[8, 10], [12, 14], [16, 18]]);
+			assert_eq!(a + b, sum)
+		}
+
+	}
+
+	mod subtraction {
+
+		use super::Matrix;
+
+		mod zero {
+
+			use super::Matrix;
+
+			mod square {
+
+				use super::Matrix;
+
+				#[test]
+				fn left_identity() {
+					let zero = Matrix::new([[0, 0], [0, 0]]);
+					let m = Matrix::new([[1, 2], [3, 4]]);
+					let expected = Matrix::new([[-1, -2], [-3, -4]]);
+					assert_eq!(zero - m, expected)
+				}
+
+				#[test]
+				fn right_identity() {
+					let zero = Matrix::new([[0, 0], [0, 0]]);
+					let m = Matrix::new([[1, 2], [3, 4]]);
+					let expected = Matrix::new([[1, 2], [3, 4]]);
+					assert_eq!(m - zero, expected)
+				}
+
+			}
+
+			mod horizontal_rectangular {
+
+				use super::Matrix;
+
+				#[test]
+				fn left_identity() {
+					let zero = Matrix::new([[0, 0, 0], [0, 0, 0]]);
+					let m = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+					let expected = Matrix::new([[-1, -2, -3], [-4, -5, -6]]);
+					assert_eq!(zero - m, expected)
+				}
+
+				#[test]
+				fn right_identity() {
+					let zero = Matrix::new([[0, 0, 0], [0, 0, 0]]);
+					let m = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+					let expected = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+					assert_eq!(m - zero, expected)
+				}
+
+				
+
+			}
+
+			mod vertical_rectangular {
+
+				use super::Matrix;
+
+				#[test]
+				fn left_identity() {
+					let zero = Matrix::new([[0, 0], [0, 0], [0, 0]]);
+					let m = Matrix::new([[1, 2], [3, 4], [5, 6]]);
+					let expected = Matrix::new([[-1, -2], [-3, -4], [-5, -6]]);
+					assert_eq!(zero - m, expected)
+				}
+
+				#[test]
+				fn right_identity() {
+					let zero = Matrix::new([[0, 0], [0, 0], [0, 0]]);
+					let m = Matrix::new([[1, 2], [3, 4], [5, 6]]);
+					let expected = Matrix::new([[1, 2], [3, 4], [5, 6]]);
+					assert_eq!(m - zero, expected)
+				}
+
+
+			}
+
+		}
+
+		#[test]
+		fn square() {
+			let a = Matrix::new([[1, 2], [3, 4]]);
+			let b = Matrix::new([[5, 6], [7, 8]]);
+			let sum = Matrix::new([[-4, -4], [-4, -4]]);
+			assert_eq!(a - b, sum)
+		}
+
+		#[test]
+		fn horizontal_rectangular() {
+			let a = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+			let b = Matrix::new([[7, 8, 9], [10, 11, 12]]);
+			let sum = Matrix::new([[-6, -6, -6], [-6, -6, -6]]);
+			assert_eq!(a - b, sum)
+		}
+
+		#[test]
+		fn vertical_rectangular() {
+			let a = Matrix::new([[1, 2], [3, 4], [5, 6]]);
+			let b = Matrix::new([[7, 8], [9, 10], [11, 12]]);
+			let sum = Matrix::new([[-6, -6], [-6, -6], [-6, -6]]);
+			assert_eq!(a - b, sum)
+		}
+
+	}
+
+	mod matrix_multiplication {
+
+		use super::Matrix;
+
+		mod zero {
+
+			use super::Matrix;
+
+			#[test]
+			fn square() {
+				let zero = Matrix::new([[0, 0], [0, 0]]);
+				let m = Matrix::new([[1, 2], [3, 4]]);
+				assert_eq!(zero * m, Matrix::new([[0, 0], [0, 0]]))
+			}
+
+			#[test]
+			fn rectangular() {
+				let zero = Matrix::new([[0, 0], [0, 0], [0, 0]]);
+				let m = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+				assert_eq!(m * zero, Matrix::new([[0, 0], [0, 0]]))
+			}
+
+		}
+
+		#[test]
+		fn identity() {
+			let identity = Matrix::new([[1, 0], [0, 1]]);
+			let m = Matrix::new([[1, 2], [3, 4]]);
+			assert_eq!(m * identity, Matrix::new([[1, 2], [3, 4]]));
+		}
+
+		#[test]
+		fn square() {
+			let a = Matrix::new([[1, 2], [3, 4]]);
+			let b = Matrix::new([[5, 6], [7, 8]]);
+			let product = Matrix::new([[19, 22], [43, 50]]);
+			assert_eq!(a * b, product)
+		}
+
+		#[test]
+		fn rectangular() {
+			let a = Matrix::new([[1, 2], [3, 4], [5, 6]]);
+			let b = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+			let product = Matrix::new([
+				[9, 12, 15],
+				[19, 26, 33],
+				[29, 40, 51]
+			]);
+			assert_eq!(a * b, product)
+		}
+
+	}
+
+	mod scalar_multiplication {
+
+		use super::Matrix;
+
+		mod zero_matrix {
+
+			use super::Matrix;
+
+			#[test]
+			fn by_zero() {
+				let zero = Matrix::new([[0, 0], [0, 0]]);
+				let product = Matrix::new([[0, 0], [0, 0]]);
+				assert_eq!(zero * 0, product)
+			}
+
+			#[test]
+			fn by_arbitrary() {
+				let zero = Matrix::new([[0, 0], [0, 0]]);
+				let product = Matrix::new([[0, 0], [0, 0]]);
+				assert_eq!(zero * 5, product)
+			}
+
+		}
+
+		#[test]
+		fn standard() {
+			let m = Matrix::new([[1, 2], [3, 4]]);
+			let product = Matrix::new([[2, 4], [6, 8]]);
+			assert_eq!(m * 2, product)
+		}
+
+		#[test]
+		fn horizontal_rectangular() {
+			let m = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+			let product = Matrix::new([[2, 4, 6], [8, 10, 12]]);
+			assert_eq!(m * 2, product)
+		}
+
+		#[test]
+		fn vertical_rectangular() {
+			let m = Matrix::new([[1, 2], [3, 4], [5, 6]]);
+			let product = Matrix::new([[2, 4], [6, 8], [10, 12]]);
+			assert_eq!(m * 2, product)
 		}
 
 	}
