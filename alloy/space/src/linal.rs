@@ -1573,8 +1573,8 @@ impl<T> Mul for Matrix<T> where T: Copy + Sub<Output=T> + Add<Output=T> + Mul<Ou
 
 /// Computes `Matrix`-[`Vector`] products.
 impl<T> Mul<Vector<T>> for Matrix<T> where T: Copy + Sub<Output=T> + Add<Output=T> + Mul<Output=T> {
-	type Output = Self;
-	fn mul(self, other: Vector<T>) -> Self {
+	type Output = Vector<T>;
+	fn mul(self, other: Vector<T>) -> Vector<T> {
 		if self.dims.num_cols != other.dim {
 			panic!("Vector of dimension {} is not compatible with a Matrix of dimension {}x{}", other.dim, self.dims.num_rows, self.dims.num_cols);
 		}
@@ -1587,7 +1587,7 @@ impl<T> Mul<Vector<T>> for Matrix<T> where T: Copy + Sub<Output=T> + Add<Output=
 			}
 			product[i] = sum;
 		}
-		Self::with_vec(vec![product])
+		Vector::with_vec(product)
 	}
 }
 
