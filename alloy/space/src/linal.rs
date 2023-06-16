@@ -29,6 +29,26 @@ impl<T> Vector<T> {
 		}
 	}
 
+	/// Constructs a new `Vector` from a [`Vec`] of components of type `T`.
+	pub fn with_vec(components: Vec<T>) -> Self {
+		let dim = components.len();
+		// set up the allocation
+		let layout = std::alloc::Layout::array::<T>(dim).unwrap();
+		let allocation = unsafe { std::alloc::alloc(layout) };
+		let ptr = match std::ptr::NonNull::new(allocation as *mut T) {
+			Some(p) => p,
+			None => std::alloc::handle_alloc_error(layout)
+		};
+		// set the components
+		for (i, component) in components.into_iter().enumerate() {
+			unsafe { std::ptr::write(ptr.as_ptr().add(i), component) }
+		}
+		Self {
+			ptr,
+			dim
+		}
+	}
+
 	/// Returns the component of `self` specified by `index`.
 	///
 	/// # Panics
