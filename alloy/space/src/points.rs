@@ -289,6 +289,88 @@ impl Point2 {
 		return self.y - a.y == slope * (self.x - a.x);
 	}
 
+	/// Whether or not `self` is to the left of `other`.
+	///
+	/// # Examples
+	/// ```
+	/// # use crate::space::points::Point2;
+	/// let a = Point2::new(-3.0, 2.0);
+	/// let b = Point2::new(1.0, 5.0);
+	/// assert!(a.left_of(&b));
+	/// assert!(!b.left_of(&a));
+	/// ```
+	pub fn left_of(&self, other: &Self) -> bool {
+		self.x < other.x
+	}
+
+	/// Whether or not `self` is to the right of `other`.
+	///
+	/// # Examples
+	/// ```
+	/// # use crate::space::points::Point2;
+	/// let a = Point2::new(2.0, 1.0);
+	/// let b = Point2::new(-3.0, 2.0);
+	/// assert!(a.right_of(&b));
+	/// assert!(!b.right_of(&a));
+	/// ```
+	pub fn right_of(&self, other: &Self) -> bool {
+		self.x > other.x
+	}
+
+	/// Whether or not `self` is above `other`.
+	///
+	/// # Examples
+	/// ```
+	/// # use crate::space::points::Point2;
+	/// let a = Point2::new(-3.0, 5.0);
+	/// let b = Point2::new(1.0, 2.0);
+	/// assert!(a.above(&b));
+	/// assert!(!b.above(&a));
+	/// ```
+	pub fn above(&self, other: &Self) -> bool {
+		self.y > other.y
+	}
+
+	/// Whether or not `self` is below `other`.
+	///
+	/// # Examples
+	/// ```
+	/// # use crate::space::points::Point2;
+	/// let a = Point2::new(-3.0, 2.0);
+	/// let b = Point2::new(1.0, 5.0);
+	/// assert!(a.below(&b));
+	/// assert!(!b.below(&a));
+	/// ```
+	pub fn below(&self, other: &Self) -> bool {
+		self.y < other.y
+	}
+
+	/// Whether or not `self` is vertically aligned with `other`.
+	///
+	/// # Examples
+	/// ```
+	/// # use crate::space::points::Point2;
+	/// let a = Point2::new(1.0, 2.0);
+	/// let b = Point2::new(1.0, 5.0);
+	/// assert!(a.vertical_aligned(&b));
+	/// ```
+	pub fn vertical_aligned(&self, other: &Self) -> bool {
+		self.x == other.x
+	}
+
+	/// Whether or not `self` is horizontally aligned with `other`.
+	///
+	/// # Examples
+	/// ```
+	/// # use crate::space::points::Point2;
+	/// let a = Point2::new(3.0, 2.0);
+	/// let b = Point2::new(-4.0, 2.0);
+	/// assert!(a.horizontal_aligned(&b));
+	/// ```
+	pub fn horizontal_aligned(&self, other: &Self) -> bool {
+		self.y == other.y
+	}
+
 }
 
 impl PartialEq for Point2 {
