@@ -395,6 +395,35 @@ impl Point2 {
 		RelativeLocation::Overlap
 	}
 
+	/// Determines the slope of the line between `a` and `b`.
+	///
+	/// # Examples
+	/// ```
+	/// # use crate::space::points::Point2;
+	/// let a = Point2::new(1.0, 2.0);
+	/// let b = Point2::new(2.0, 3.0);
+	/// assert_eq!(Point2::slope(&a, &b), 1.0);
+	/// ```
+	pub fn slope(a: &Self, b: &Self) -> f32 {
+		(a.y - b.y) / (a.x - b.x)
+	}
+
+	/// Constructs a linear equation given two `Point2`s.
+	///
+	/// # Examples
+	/// ```
+	/// # use crate::space::points::Point2;
+	/// let a = Point2::new(1.0, 2.0);
+	/// let b = Point2::new(2.0, 3.0);
+	/// let y = Point2::line(a, b);
+	/// assert_eq!(y(1.0), 2.0);
+	/// assert_eq!(y(2.0), 3.0);
+	/// assert_eq!(y(3.0), 4.0);
+	/// ```
+	pub fn line(a: Self, b: Self) -> impl Fn(f32) -> f32 {
+		return move |x| Self::slope(&a, &b) * (x - a.x) + a.y;
+	}
+
 }
 
 impl PartialEq for Point2 {
