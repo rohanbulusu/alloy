@@ -258,4 +258,104 @@ impl Point2 {
 		(x*x + y*y).sqrt()
 	}
 
+	/// Takes the line defined by `a` and `b` and tests whether or not `self`
+	/// lies on it.
+	///
+	/// # Examples
+	/// ```
+	/// # use crate::space::points::Point2;
+	/// let a = Point2::new(3.0, 2.0);
+	/// let b = Point2::new(4.0, 1.0);
+	/// let c = Point2::new(1.0, 4.0);
+	/// assert!(c.collinear_with(&a, &b));
+	/// ```
+	/// ```
+	/// # use crate::space::points::Point2;
+	/// let a = Point2::new(3.0, 2.0);
+	/// let b = Point2::new(4.0, 1.0);
+	/// let c = Point2::new(2.0, -9.0);
+	/// assert!(!c.collinear_with(&a, &b));
+	/// ```
+	pub fn collinear_with(&self, a: &Self, b: &Self) -> bool {
+		if a == b {
+			return true;
+		}
+		// if the a and b form a vertical line, the slope is
+		// undefined, so this just handles that exceptional case
+		if a.x == b.x {
+			return self.x == a.x;
+		}
+		let slope = (a.y - b.y) / (a.x - b.x);
+		return self.y - a.y == slope * (self.x - a.x);
+	}
+
+}
+
+impl PartialEq for Point2 {
+	fn eq(&self, other: &Self) -> bool {
+		let x_equality = (self.x - other.x).abs() < f32::EPSILON;
+		let y_equality = (self.y - other.y).abs() < f32::EPSILON;
+		x_equality && y_equality
+	}
+}
+
+#[cfg(test)]
+mod point2 {
+
+	use super::Point2;
+
+	mod collinearity {
+
+		use super::Point2;
+
+		#[test]
+		fn all_same() {
+			let a = Point2::new(1.0, 3.0);
+			let b = Point2::new(1.0, 3.0);
+			let c = Point2::new(1.0, 3.0);
+			assert!(c.collinear_with(&a, &b))
+		}
+
+		#[test]
+		fn overlapping_endpoints() {
+			let a = Point2::new(1.0, 3.0);
+			let b = Point2::new(1.0, 3.0);
+			let c = Point2::new(4.0, 7.0);
+			assert!(c.collinear_with(&a, &b))
+		}
+
+		#[test]
+		fn point_overlaps_with_left_endpoint() {
+			let a = Point2::new(4.0, 7.0);
+			let b = Point2::new(1.0, 3.0);
+			let c = Point2::new(1.0, 3.0);
+			assert!(c.collinear_with(&a, &b))
+		}
+
+		#[test]
+		fn point_overlaps_with_right_endpoint() {
+			let a = Point2::new(1.0, 3.0);
+			let b = Point2::new(4.0, 7.0);
+			let c = Point2::new(1.0, 3.0);
+			assert!(c.collinear_with(&a, &b))
+		}
+
+		#[test]
+		fn vertical() {
+			let a = Point2::new(1.0, 3.0);
+			let b = Point2::new(1.0, -4.0);
+			let c = Point2::new(1.0, 4.3);
+			assert!(c.collinear_with(&a, &b))
+		}
+
+		#[test]
+		fn horizontal() {
+			let a = Point2::new(3.0, 1.0);
+			let b = Point2::new(-4.0, 1.0);
+			let c = Point2::new(4.3, 1.0);
+			assert!(c.collinear_with(&a, &b))
+		}
+
+	}
+
 }
