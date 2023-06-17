@@ -894,6 +894,35 @@ impl<T> Matrix<T> {
 		Self { ptr, dims }
 	}
 
+	/// Constructs a new column `Matrix` from a [`Vector`].
+	///
+	/// # Examples
+	/// ```
+	/// # use crate::space::linal::{Vector, Matrix};
+	/// let v = Vector::new([1, 2, 3]);
+	/// let m = Matrix::with_vector(v);
+	/// assert_eq!(m.get(0, 0), 1);
+	/// assert_eq!(m.get(1, 0), 2);
+	/// assert_eq!(m.get(2, 0), 3);
+	/// ```
+	pub fn with_vector(components: Vector<T>) -> Self {
+		let num_rows = components.dim;
+		// set up the allocation
+		let layout = std::alloc::Layout::array::<T>(num_rows).unwrap();
+		let allocation = unsafe { std::alloc::alloc(layout) };
+		let ptr = match std::ptr::NonNull::new(allocation as *mut T) {
+			Some(p) => p,
+			None => std::alloc::handle_alloc_error(layout)
+		};
+		// set the components
+		for i in 0..components.dim {
+			unsafe { std::ptr::write(ptr.as_ptr().add(i), components.get(i)) }
+		}
+		// set the dimensions
+		let dims = MatrixDimensions::new(num_rows, 1);
+		Self { ptr, dims }
+	}
+
 	/// Returns the component of `self` specified by `candidate_row` and
 	/// `candidate_col`.
 	///
