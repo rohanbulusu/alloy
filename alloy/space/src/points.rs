@@ -70,6 +70,7 @@ impl Angle {
 }
 
 /// Representation of a two-dimensional point.
+#[derive(Clone, Copy)]
 pub struct Point2 {
 	/// Horizontal component of the `Point2`
 	pub x: f32,
