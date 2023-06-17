@@ -178,7 +178,7 @@ impl Point2 {
 		}
 	}
 
-	/// Performs an affine transformation of `self` by translation.
+	/// Performs an affine transformation of `self` by `translation`.
 	///
 	/// If the provided [`Vector`] is zero-dimensional, `self` is left
 	/// unchanged; if it's one-dimensional, `translation` is treated like a 
@@ -235,7 +235,7 @@ impl Point2 {
 		self.y += translation.get(1);
 	}
 
-	/// Performs an affine transformation of `self` by translation in place.
+	/// Performs an affine transformation of `self` by `translation` in place.
 	///
 	/// If the provided [`Vector`] is zero-dimensional, `self` is directly 
 	/// returned; if it's one-dimensional, `translation` is treated like a 
