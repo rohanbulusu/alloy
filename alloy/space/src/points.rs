@@ -434,6 +434,134 @@ impl PartialEq for Point2 {
 	}
 }
 
+/// Representation of a three-dimensional point.
+#[derive(Clone, Copy)]
+pub struct Point3 {
+	/// Horizontal component of the `Point3`
+	pub x: f32,
+	/// Vertical component of the `Point3`
+	pub y: f32,
+	/// Depth component of the `Point3`
+	pub z: f32
+}
+
+impl Point3 {
+
+	/// Constructs a new `Point3` from individual [`f32`] components.
+	pub fn new(x: f32, y: f32, z: f32) -> Self {
+		Self { x, y, z }
+	}
+
+	/// Constructs a new `Point3` from a length-three array.
+	pub fn with_array(coordinates: [f32; 3]) -> Self {
+		Self {
+			x: coordinates[0],
+			y: coordinates[1],
+			z: coordinates[2]
+		}
+	}
+
+	/// Constructs a new `Point3` from a length-three slice.
+	pub fn with_slice<'a>(coordinates: &'a [f32; 3]) -> Self {
+		Self {
+			x: coordinates[0],
+			y: coordinates[1],
+			z: coordinates[2]
+		}
+	}
+
+	/// Constructs a new `Point3` from a [`Vec`] of length greater than or
+	/// equal to three.
+	///
+	/// # Panics
+	/// If the `Vec` provided has too small a length (less than three elements
+	/// lone), a panic is issued.
+	/// ```should_panic
+	/// # use crate::space::points::Point3;
+	/// let _ = Point3::with_vec(vec![1.0]);
+	/// ```
+	/// ```should_panic
+	/// # use crate::space::points::Point3;
+	/// let _ = Point3::with_vec(vec![1.0, 2.0]);
+	/// ```
+	/// If the `Vec` provided has a length greater than three, then only the
+	/// first three elments are used to create the `Point3`.
+	///
+	/// # Examples
+	/// ```
+	/// # use crate::space::points::Point3;
+	/// let v = Point3::with_vec(vec![1.0, 2.0, 3.0]);
+	/// assert_eq!(v.x, 1.0);
+	/// assert_eq!(v.y, 2.0);
+	/// assert_eq!(v.z, 3.0);
+	/// ```
+	/// ```
+	/// # use crate::space::points::Point3;
+	/// let v = Point3::with_vec(vec![1.0, 2.0, 3.0, 4.0]);
+	/// assert_eq!(v.x, 1.0);
+	/// assert_eq!(v.y, 2.0);
+	/// assert_eq!(v.z, 3.0);
+	/// ```
+	pub fn with_vec(coordinates: Vec<f32>) -> Self {
+		if coordinates.len() < 3 {
+			panic!("Cannot construct a Point3 from a Vec with less than three elements")
+		}
+		Self {
+			x: coordinates[0],
+			y: coordinates[1],
+			z: coordinates[2]
+		}
+	}
+
+	/// Constructs a new `Point3` from a [`Vector`] of length greater than or
+	/// equal to three.
+	///
+	/// # Panics
+	/// If the `Vector` provided has too small a length (less than three elements
+	/// lone), a panic is issued.
+	/// ```should_panic
+	/// # use crate::space::linal::Vector;
+	/// # use crate::space::points::Point3;
+	/// let _ = Point3::with_vector(Vector::new([1.0]));
+	/// ```
+	/// ```should_panic
+	/// # use crate::space::linal::Vector;
+	/// # use crate::space::points::Point3;
+	/// let _ = Point3::with_vector(Vector::new([1.0, 2.0]));
+	/// ```
+	/// If the `Vector` provided has a length greater than three, then only the
+	/// first three elments are used to create the `Point3`.
+	///
+	/// # Examples
+	/// ```
+	/// # use crate::space::linal::Vector;
+	/// # use crate::space::points::Point3;
+	/// let v = Point3::with_vector(Vector::new([1.0, 2.0, 3.0]));
+	/// assert_eq!(v.x, 1.0);
+	/// assert_eq!(v.y, 2.0);
+	/// assert_eq!(v.z, 3.0);
+	/// ```
+	/// ```
+	/// # use crate::space::linal::Vector;
+	/// # use crate::space::points::Point3;
+	/// let v = Point3::with_vector(Vector::new([1.0, 2.0, 3.0, 4.0]));
+	/// assert_eq!(v.x, 1.0);
+	/// assert_eq!(v.y, 2.0);
+	/// assert_eq!(v.z, 3.0);
+	/// ```
+	pub fn with_vector(coordinates: Vector<f32>) -> Self {
+		if coordinates.dim < 3 {
+			panic!("Cannot construct a Point3 from a Vector with less than three indices")
+		}
+		Self {
+			x: coordinates.get(0),
+			y: coordinates.get(1),
+			z: coordinates.get(2)
+		}
+	}
+
+}
+
 /// Specifies relative locations between [`Point2`]s and/or [`Point3`]s.
 ///
 /// This is subject to change depending on the need for the specification of
