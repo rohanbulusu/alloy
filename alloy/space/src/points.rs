@@ -232,7 +232,27 @@ impl Point2 {
 	}
 
 	/// Computes the distance between `self` and `other`.
-	pub fn dist(&self, other: &Self) -> f32 {
+	///
+	/// # Examples
+	/// ```
+	/// # use crate::space::points::Point2;
+	/// let a = Point2::new(0.0, 0.0);
+	/// let b = Point2::new(-4.0, 3.0);
+	/// assert_eq!(a.to(&b), 5.0);
+	/// ```
+	/// ```
+	/// # use crate::space::points::Point2;
+	/// let a = Point2::new(1.0, 3.0);
+	/// let b = Point2::new(-3.0, 6.0);
+	/// assert_eq!(a.to(&b), 5.0);
+	/// ```
+	/// ```
+	/// # use crate::space::points::Point2;
+	/// let a = Point2::new(4.0, 6.0);
+	/// let b = Point2::new(4.0, 6.0);
+	/// assert_eq!(a.to(&b), 0.0);
+	/// ```
+	pub fn to(&self, other: &Self) -> f32 {
 		let x = (self.x - other.x).abs();
 		let y = (self.y - other.y).abs();
 		(x*x + y*y).sqrt()
