@@ -178,7 +178,64 @@ impl Point2 {
 		}
 	}
 
-	/// Translates `self` by `translation` in place.
+	/// Performs an affine transformation of `self` by translation.
+	///
+	/// If the provided [`Vector`] is zero-dimensional, `self` is left
+	/// unchanged; if it's one-dimensional, `translation` is treated like a 
+	/// two-dimensional vector with horizontal component specified by the
+	/// provided single element; if it's of dimension greater than two, the 
+	/// first two components are used as the transformation elements.
+	///
+	/// # Examples
+	/// ```
+	/// # use crate::space::linal::Vector;
+	/// # use crate::space::points::Point2;
+	/// let v = Vector::new([]);
+	/// let mut position = Point2::new(0.0, 0.0);
+	/// position.slide_by(v);
+	/// assert_eq!(position.x, 0.0);
+	/// assert_eq!(position.y, 0.0);
+	/// ```
+	/// ```
+	/// # use crate::space::linal::Vector;
+	/// # use crate::space::points::Point2;
+	/// let v = Vector::new([1.0]);
+	/// let mut position = Point2::new(0.0, 0.0);
+	/// position.slide_by(v);
+	/// assert_eq!(position.x, 1.0);
+	/// assert_eq!(position.y, 0.0);
+	/// ```
+	/// ```
+	/// # use crate::space::linal::Vector;
+	/// # use crate::space::points::Point2;
+	/// let v = Vector::new([1.0, 2.0]);
+	/// let mut position = Point2::new(0.0, 0.0);
+	/// position.slide_by(v);
+	/// assert_eq!(position.x, 1.0);
+	/// assert_eq!(position.y, 2.0);
+	/// ```
+	/// ```
+	/// # use crate::space::linal::Vector;
+	/// # use crate::space::points::Point2;
+	/// let v = Vector::new([1.0, 2.0, 3.0]);
+	/// let mut position = Point2::new(0.0, 0.0);
+	/// position.slide_by(v);
+	/// assert_eq!(position.x, 1.0);
+	/// assert_eq!(position.y, 2.0);
+	/// ```
+	pub fn slide_by(&mut self, translation: Vector<f32>) {
+		if translation.dim == 0 {
+			return;
+		}
+		if translation.dim == 1 {
+			self.x += translation.get(0);
+			return;
+		}
+		self.x += translation.get(0);
+		self.y += translation.get(1);
+	}
+
+	/// Performs an affine transformation of `self` by translation in place.
 	///
 	/// If the provided [`Vector`] is zero-dimensional, `self` is directly 
 	/// returned; if it's one-dimensional, `translation` is treated like a 
