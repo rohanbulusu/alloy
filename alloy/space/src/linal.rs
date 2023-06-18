@@ -829,6 +829,7 @@ impl MatrixDimensions {
 	/// let d = MatrixDimensions::new(1, 3);
 	/// assert!(!c.multiplies_with(&d));
 	/// ```
+	#[inline]
 	pub const fn multiplies_with(&self, other: &Self) -> bool {
 		self.num_cols == other.num_rows
 	}
