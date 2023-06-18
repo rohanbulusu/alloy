@@ -52,7 +52,7 @@ impl Angle {
 	}
 
 	/// Constructs a new `Angle` from a degrees value.
-	pub fn with_degrees(theta: f64) -> Self {
+	pub const fn with_degrees(theta: f64) -> Self {
 		Self {
 			degrees: theta,
 			radians: Self::to_radians(theta)
