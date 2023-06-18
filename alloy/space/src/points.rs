@@ -135,6 +135,7 @@ impl Point2 {
 	/// assert_eq!(v.x, 1.0);
 	/// assert_eq!(v.y, 2.0);
 	/// ```
+	#[inline]
 	pub fn with_vec(coordinates: Vec<f32>) -> Self {
 		if coordinates.len() < 2 {
 			panic!("Vec must be at least two-dimensional to construct a Point2")
