@@ -429,29 +429,6 @@ impl Point2 {
 		self.y == other.y
 	}
 
-	/// Returns the relative positioning of `other` with respect to `self`.
-	///
-	/// This is primarily to enable pattern matching on the
-	/// [`RelativeLocation`] enum, not to guage a specific position. If a 
-	/// particular question of positioning is needed, the use of 
-	/// [`Point2::left_of`], [`Point2::right_of`], [`Point2::above`], or
-	/// [`Point2::below`] is recommended.
-	pub fn compare(&self, other: &Self) -> RelativeLocation {
-		if self.left_of(other) {
-			return RelativeLocation::Left;
-		}
-		if self.right_of(other) {
-			return RelativeLocation::Right;
-		}
-		if self.above(other) {
-			return RelativeLocation::Above;
-		}
-		if self.below(other) {
-			return RelativeLocation::Below;
-		}
-		RelativeLocation::Overlap
-	}
-
 	/// Determines the slope of the line between `a` and `b`.
 	///
 	/// # Examples
@@ -802,28 +779,6 @@ impl Point3 {
 		(x*x + y*y + z*z).sqrt()
 	}
 
-}
-
-/// Specifies relative locations between [`Point2`]s and/or [`Point3`]s.
-///
-/// This is subject to change depending on the need for the specification of
-/// horizontal and vertical coordinate equality.
-#[non_exhaustive]
-pub enum RelativeLocation {
-	/// For `Point3`s only, if one is in front of the other
-	Before,
-	/// For `Point3`s only, f one is behind the other
-	Behind,
-	/// If one is above the other
-	Above,
-	/// If one is below the other
-	Below,
-	/// If one is to the left of the other
-	Left,
-	/// If one is to the right of the other
-	Right,
-	/// If both points are the same
-	Overlap
 }
 
 #[cfg(test)]
