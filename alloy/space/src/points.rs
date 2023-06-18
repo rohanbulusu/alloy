@@ -943,6 +943,7 @@ impl Point3 {
 	/// assert!(a.horizontal_aligned(&b));
 	/// assert!(b.horizontal_aligned(&a));
 	/// ```
+	#[inline]
 	pub fn horizontal_aligned(&self, other: &Self) -> bool {
 		self.x == other.x
 	}
@@ -957,6 +958,7 @@ impl Point3 {
 	/// assert!(a.vertical_aligned(&b));
 	/// assert!(b.vertical_aligned(&a));
 	/// ```
+	#[inline]
 	pub fn vertical_aligned(&self, other: &Self) -> bool {
 		self.y == other.y
 	}
@@ -971,6 +973,7 @@ impl Point3 {
 	/// assert!(a.depth_aligned(&b));
 	/// assert!(b.depth_aligned(&a));
 	/// ```
+	#[inline]
 	pub fn depth_aligned(&self, other: &Self) -> bool {
 		self.z == other.z
 	}
