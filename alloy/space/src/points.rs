@@ -54,6 +54,7 @@ impl Angle {
 	}
 
 	/// Constructs a new `Angle` from a degrees value.
+	#[inline]
 	pub const fn with_degrees(theta: f64) -> Self {
 		Self {
 			degrees: theta,
