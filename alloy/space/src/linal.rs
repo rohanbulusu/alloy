@@ -1103,7 +1103,7 @@ impl<T> Matrix<T> {
 	/// 	assert_eq!(col[1], i + 3);
 	/// }
 	/// ```
-	pub fn cols<'b>(&'b self) -> MatrixCols<'b, T> {
+	pub const fn cols<'b>(&'b self) -> MatrixCols<'b, T> {
 		MatrixCols::new(&self.ptr, self.dims.num_cols, self.dims.num_rows)
 	}
 
