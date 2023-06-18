@@ -815,6 +815,7 @@ impl Point3 {
 	/// assert_eq!(y(2.0, 3.0), 3.0);
 	/// assert_eq!(y(3.0, 4.0), 3.0);
 	/// ```
+	#[inline]
 	pub fn line(a: Self, b: Self) -> impl Fn(f32, f32) -> f32 {
 		let x_slope = a.x - b.x;
 		let y_slope = a.y - b.y;
