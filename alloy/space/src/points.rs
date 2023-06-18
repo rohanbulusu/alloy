@@ -779,6 +779,81 @@ impl Point3 {
 		(x*x + y*y + z*z).sqrt()
 	}
 
+	/// Constructs a linear equation given two `Point3`s.
+	///
+	/// # Examples
+	/// ```
+	/// # use crate::space::points::Point3;
+	/// let a = Point3::new(1.0, 2.0, 3.0);
+	/// let b = Point3::new(2.0, 3.0, 3.0);
+	/// let y = Point3::line(a, b);
+	/// assert_eq!(y(1.0, 2.0), 3.0);
+	/// assert_eq!(y(2.0, 3.0), 3.0);
+	/// assert_eq!(y(3.0, 4.0), 3.0);
+	/// ```
+	pub fn line(a: Self, b: Self) -> impl Fn(f32, f32) -> f32 {
+		let x_slope = a.x - b.x;
+		let y_slope = a.y - b.y;
+		let z_slope = a.z - b.z;
+		return move |x, y| {
+			let x_term = z_slope*(x - a.x) / x_slope;
+			let y_term = z_slope*(y - a.y) / y_slope;
+			x_term - y_term + a.z
+		};
+	}
+
+	/// Takes the line defined by `a` and `b` and tests whether or not `self`
+	/// lies on it.
+	///
+	/// # Examples
+	/// ```
+	/// # use crate::space::points::Point3;
+	/// let a = Point3::new(3.0, 2.0, 3.0);
+	/// let b = Point3::new(4.0, 1.0, 3.0);
+	/// let c = Point3::new(1.0, 4.0, 3.0);
+	/// assert!(c.collinear_with(&a, &b));
+	/// ```
+	/// ```
+	/// # use crate::space::points::Point3;
+	/// let a = Point3::new(4.0, 2.0, 3.0);
+	/// let b = Point3::new(3.0, 1.0, 3.0);
+	/// let c = Point3::new(5.0, -9.0, 3.0);
+	/// assert!(!c.collinear_with(&a, &b));
+	/// ```
+	pub fn collinear_with(&self, a: &Self, b: &Self) -> bool {
+		if a == b {
+			return true;
+		}
+		if a.x == b.x {
+			let a_without_x = Point2::new(a.y, a.z);
+			let b_without_x = Point2::new(b.y, b.z);
+			let self_without_x = Point2::new(self.y, self.z);
+			return self_without_x.collinear_with(&a_without_x, &b_without_x);
+		}
+		if a.y == b.y {
+			let a_without_y = Point2::new(a.x, a.z);
+			let b_without_y = Point2::new(b.x, b.z);
+			let self_without_y = Point2::new(self.x, self.z);
+			return self_without_y.collinear_with(&a_without_y, &b_without_y);
+		}
+		if a.z == b.z {
+			let a_without_z = Point2::new(a.x, a.y);
+			let b_without_z = Point2::new(b.x, b.y);
+			let self_without_z = Point2::new(self.x, self.y);
+			return self_without_z.collinear_with(&a_without_z, &b_without_z);
+		}
+		Point3::line(*a, *b)(self.x, self.y) == self.z
+	}
+
+}
+
+impl PartialEq for Point3 {
+	fn eq(&self, other: &Self) -> bool {
+		let x_equality = (self.x - other.x).abs() < f32::EPSILON;
+		let y_equality = (self.y - other.y).abs() < f32::EPSILON;
+		let z_equality = (self.z - other.z).abs() < f32::EPSILON;
+		x_equality && y_equality && z_equality
+	}
 }
 
 #[cfg(test)]
@@ -836,6 +911,73 @@ mod point2 {
 			let b = Point2::new(-4.0, 1.0);
 			let c = Point2::new(4.3, 1.0);
 			assert!(c.collinear_with(&a, &b))
+		}
+
+	}
+
+}
+
+#[cfg(test)]
+mod point3 {
+
+	use super::Point3;
+
+	mod collinear {
+
+		use super::Point3;
+
+		mod in_plane {
+
+			use super::Point3;
+
+			#[test]
+			fn all_same() {
+				let a = Point3::new(1.0, 3.0, 0.0);
+				let b = Point3::new(1.0, 3.0, 0.0);
+				let c = Point3::new(1.0, 3.0, 0.0);
+				assert!(c.collinear_with(&a, &b))
+			}
+
+			#[test]
+			fn overlapping_endpoints() {
+				let a = Point3::new(1.0, 3.0, 0.0);
+				let b = Point3::new(1.0, 3.0, 0.0);
+				let c = Point3::new(4.0, 7.0, 0.0);
+				assert!(c.collinear_with(&a, &b))
+			}
+
+			#[test]
+			fn point_overlaps_with_left_endpoint() {
+				let a = Point3::new(4.0, 7.0, 0.0);
+				let b = Point3::new(1.0, 3.0, 0.0);
+				let c = Point3::new(1.0, 3.0, 0.0);
+				assert!(c.collinear_with(&a, &b))
+			}
+
+			#[test]
+			fn point_overlaps_with_right_endpoint() {
+				let a = Point3::new(1.0, 3.0, 0.0);
+				let b = Point3::new(4.0, 7.0, 0.0);
+				let c = Point3::new(1.0, 3.0, 0.0);
+				assert!(c.collinear_with(&a, &b))
+			}
+
+			#[test]
+			fn vertical() {
+				let a = Point3::new(1.0, 3.0, 0.0);
+				let b = Point3::new(1.0, -4.0, 0.0);
+				let c = Point3::new(1.0, 4.3, 0.0);
+				assert!(c.collinear_with(&a, &b))
+			}
+
+			#[test]
+			fn horizontal() {
+				let a = Point3::new(3.0, 1.0, 0.0);
+				let b = Point3::new(-4.0, 1.0, 0.0);
+				let c = Point3::new(4.3, 1.0, 0.0);
+				assert!(c.collinear_with(&a, &b))
+			}
+
 		}
 
 	}
