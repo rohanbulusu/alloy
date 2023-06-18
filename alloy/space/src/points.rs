@@ -557,6 +557,7 @@ impl Point3 {
 	/// assert_eq!(v.y, 2.0);
 	/// assert_eq!(v.z, 3.0);
 	/// ```
+	#[inline]
 	pub fn with_vec(coordinates: Vec<f32>) -> Self {
 		if coordinates.len() < 3 {
 			panic!("Cannot construct a Point3 from a Vec with less than three elements")
@@ -604,6 +605,7 @@ impl Point3 {
 	/// assert_eq!(v.y, 2.0);
 	/// assert_eq!(v.z, 3.0);
 	/// ```
+	#[inline]
 	pub fn with_vector(coordinates: Vector<f32>) -> Self {
 		if coordinates.dim < 3 {
 			panic!("Cannot construct a Point3 from a Vector with less than three indices")
