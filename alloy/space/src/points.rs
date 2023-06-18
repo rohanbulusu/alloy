@@ -904,6 +904,21 @@ impl Point3 {
 		self.y < other.y
 	}
 
+	
+	/// Whether or not `self` is horizontally aligned with `self`.
+	///
+	/// # Examples
+	/// ```
+	/// # use crate::space::points::Point3;
+	/// let a = Point3::new(3.0, 2.0, 4.0);
+	/// let b = Point3::new(3.0, -2.0, -5.0);
+	/// assert!(a.horizontal_aligned(&b));
+	/// assert!(!a.horizontal_aligned(&b));
+	/// ```
+	pub fn horizontal_aligned(&self, other: &Self) -> bool {
+		self.x == other.x
+	}
+
 }
 
 impl PartialEq for Point3 {
