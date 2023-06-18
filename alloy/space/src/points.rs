@@ -904,7 +904,7 @@ impl Point3 {
 		self.y < other.y
 	}
 
-	/// Whether or not `self` is horizontally aligned with `self`.
+	/// Whether or not `self` is horizontally aligned with `other`.
 	///
 	/// # Examples
 	/// ```
