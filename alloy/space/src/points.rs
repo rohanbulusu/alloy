@@ -426,6 +426,7 @@ impl Point2 {
 	/// let b = Point2::new(1.0, 5.0);
 	/// assert!(a.vertical_aligned(&b));
 	/// ```
+	#[inline]
 	pub fn vertical_aligned(&self, other: &Self) -> bool {
 		self.x == other.x
 	}
@@ -439,6 +440,7 @@ impl Point2 {
 	/// let b = Point2::new(-4.0, 2.0);
 	/// assert!(a.horizontal_aligned(&b));
 	/// ```
+	#[inline]
 	pub fn horizontal_aligned(&self, other: &Self) -> bool {
 		self.y == other.y
 	}
