@@ -48,6 +48,7 @@ impl Angle {
 	/// let theta = 180.0;
 	/// assert_eq!(Angle::to_radians(theta), std::f64::consts::PI);
 	/// ```
+	#[inline]
 	pub const fn to_radians(theta: f64) -> f64 {
 		theta * Self::DEGREES_TO_RADIANS
 	}
