@@ -795,6 +795,7 @@ impl Point3 {
 	/// let b = Point3::new(1.0, -1.0, 2.0);
 	/// assert_eq!(a.to(&b), 0.0);
 	/// ```
+	#[inline]
 	pub fn to(&self, other: &Self) -> f32 {
 		let x = (self.x - other.x).abs();
 		let y = (self.y - other.y).abs();
