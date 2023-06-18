@@ -932,6 +932,20 @@ impl Point3 {
 		self.y == other.y
 	}
 
+	/// Whether or not `self` is aligned along the z-axis with `other`.
+	///
+	/// # Examples
+	/// ```
+	/// # use crate::space::points::Point3;
+	/// let a = Point3::new(3.0, -2.0, -5.0);
+	/// let b = Point3::new(4.0, 2.0, -5.0);
+	/// assert!(a.depth_aligned(&b));
+	/// assert!(b.depth_aligned(&a));
+	/// ```
+	pub fn depth_aligned(&self, other: &Self) -> bool {
+		self.z == other.z
+	}
+
 }
 
 impl PartialEq for Point3 {
