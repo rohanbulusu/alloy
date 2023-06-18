@@ -1087,7 +1087,7 @@ impl<T> Matrix<T> {
 	/// 	assert_eq!(row[1], 2*i + 2);
 	/// }
 	/// ```
-	pub fn rows<'a>(&'a self) -> MatrixRows<'a, T> {
+	pub const fn rows<'a>(&'a self) -> MatrixRows<'a, T> {
 		MatrixRows::new(&self.ptr, self.dims.num_rows, self.dims.num_cols)
 	}
 
