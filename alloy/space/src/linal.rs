@@ -1051,7 +1051,7 @@ impl<T> Matrix<T> {
 	/// let square = Matrix::new([[1, 2], [3, 4]]);
 	/// assert!(!square.is_col());
 	/// ```
-	pub fn is_col(&self) -> bool {
+	pub const fn is_col(&self) -> bool {
 		self.dims.num_cols == 1
 	}
 
