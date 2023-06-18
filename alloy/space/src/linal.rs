@@ -83,6 +83,7 @@ impl<T> Vector<T> where T: Sub<Output=T> + Mul<Output=T> {
 	/// # use crate::space::linal::Vector;
 	/// let _ = Vector::cross(Vector::new([1.0, 2.0]), Vector::new([3.0, 4.0]));
 	/// ```
+	#[inline]
 	pub fn cross(a: Self, b: Self) -> Self {
 		if a.dim != b.dim {
 			panic!("Cross products can only be taken between Vectors of the same dimensionality")
