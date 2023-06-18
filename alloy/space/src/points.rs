@@ -912,6 +912,7 @@ impl Point3 {
 	/// assert!(a.above(&b));
 	/// assert!(!b.above(&a));
 	/// ```
+	#[inline]
 	pub fn above(&self, other: &Self) -> bool {
 		self.y > other.y
 	}
@@ -927,6 +928,7 @@ impl Point3 {
 	/// assert!(a.below(&b));
 	/// assert!(!b.below(&a));
 	/// ```
+	#[inline]
 	pub fn below(&self, other: &Self) -> bool {
 		self.y < other.y
 	}
