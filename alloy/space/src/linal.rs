@@ -1024,6 +1024,7 @@ impl<T> Matrix<T> {
 	/// let square = Matrix::new([[1, 2], [3, 4]]);
 	/// assert!(!square.is_row());
 	/// ```
+	#[inline]
 	pub const fn is_row(&self) -> bool {
 		self.dims.num_rows == 1
 	}
