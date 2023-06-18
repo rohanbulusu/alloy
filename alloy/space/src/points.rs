@@ -874,6 +874,21 @@ impl Point3 {
 		self.x > other.x
 	}
 
+
+	/// Whether or not `self` is above `other`.
+	///
+	/// # Examples
+	/// ```
+	/// # use crate::space::points::Point3;
+	/// let a = Point3::new(3.0, 4.0, 2.0);
+	/// let b = Point3::new(-2.0, 2.0, 1.0);
+	/// assert!(a.above(&b));
+	/// assert!(!b.above(&a));
+	/// ```
+	pub fn above(&self, other: &Self) -> bool {
+		self.y > other.y
+	}
+
 }
 
 impl PartialEq for Point3 {
