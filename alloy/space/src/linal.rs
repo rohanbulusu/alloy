@@ -1372,6 +1372,7 @@ impl<T> Matrix<T> where T: Add<Output=T> {
 	/// let m = Matrix::new([[1]]);
 	/// assert_eq!(m.trace(), 1);
 	/// ```
+	#[inline]
 	pub fn trace(&self) -> T {
 		if !self.is_square() {
 			panic!("Cannot take the trace of a non-square matrix")
