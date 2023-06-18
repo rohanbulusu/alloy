@@ -859,6 +859,21 @@ impl Point3 {
 		self.x < other.x
 	}
 
+
+	/// Whether or not `self` is right of `other`.
+	///
+	/// # Examples
+	/// ```
+	/// # use crate::space::points::Point3;
+	/// let a = Point3::new(3.0, 4.0, 2.0);
+	/// let b = Point3::new(-4.0, 2.0, 1.0);
+	/// assert!(a.right_of(&b));
+	/// assert!(!b.right_of(&a));
+	/// ```
+	pub fn right_of(&self, other: &Self) -> bool {
+		self.x > other.x
+	}
+
 }
 
 impl PartialEq for Point3 {
