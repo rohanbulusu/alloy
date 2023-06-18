@@ -1720,7 +1720,7 @@ pub struct MatrixRows<'a, T> {
 impl<'a, T> MatrixRows<'a, T> {
 
 	/// Constructs a new `MatrixRows` from relevant `Matrix` information.
-	pub fn new(ptr: &'a std::ptr::NonNull<T>, num_rows: usize, elements_per_row: usize) -> Self {
+	pub const fn new(ptr: &'a std::ptr::NonNull<T>, num_rows: usize, elements_per_row: usize) -> Self {
 		Self {
 			ptr,
 			num_rows,
