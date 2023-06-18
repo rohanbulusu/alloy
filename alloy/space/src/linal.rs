@@ -997,7 +997,7 @@ impl<T> Matrix<T> {
 	/// let null = Matrix::<usize>::new::<0, 0>([]);
 	/// assert!(!null.is_square());
 	/// ```
-	pub fn is_square(&self) -> bool {
+	pub const fn is_square(&self) -> bool {
 		if self.dims.are(0, 0) {
 			return false;
 		}
