@@ -1198,6 +1198,7 @@ impl<T> Matrix<T> where T: Default + PartialEq {
 	///
 	/// assert!(quirky_identity.is_diagonal());
 	/// ```
+	#[inline]
 	pub fn is_diagonal(&self) -> bool {
 		if !self.is_square() {
 			return false;
