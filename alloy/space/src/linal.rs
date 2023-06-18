@@ -61,6 +61,7 @@ impl<T> Vector<T> {
 	/// let v = Vector::new([1, 2]);
 	/// let _ = v.get(2);
 	/// ```
+	#[inline]
 	pub fn get(&self, index: usize) -> T {
 		if index >= self.dim {
 			panic!("Cannot fetch element with index {} for a {}-dimensional Vector", index, self.dim);
