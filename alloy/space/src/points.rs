@@ -845,6 +845,20 @@ impl Point3 {
 		Point3::line(*a, *b)(self.x, self.y) == self.z
 	}
 
+	/// Whether or not `self` is left of `other`.
+	///
+	/// # Examples
+	/// ```
+	/// # use crate::space::points::Point3;
+	/// let a = Point3::new(-4.0, 2.0, 1.0);
+	/// let b = Point3::new(3.0, 4.0, 2.0);
+	/// assert!(a.left_of(&b));
+	/// assert!(!b.left_of(&a));
+	/// ```
+	pub fn left_of(&self, other: &Self) -> bool {
+		self.x < other.x
+	}
+
 }
 
 impl PartialEq for Point3 {
