@@ -918,6 +918,20 @@ impl Point3 {
 		self.x == other.x
 	}
 
+	/// Whether or not `self` is vertically aligned with `other`.
+	///
+	/// # Examples
+	/// ```
+	/// # use crate::space::points::Point3;
+	/// let a = Point3::new(2.0, -2.0, -5.0);
+	/// let b = Point3::new(-5.0, -2.0, 3.0);
+	/// assert!(a.vertical_aligned(&b));
+	/// assert!(b.vertical_aligned(&a));
+	/// ```
+	pub fn vertical_aligned(&self, other: &Self) -> bool {
+		self.y == other.y
+	}
+
 }
 
 impl PartialEq for Point3 {
