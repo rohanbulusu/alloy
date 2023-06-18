@@ -258,7 +258,7 @@ pub struct VecIter<T> {
 impl<T> VecIter<T> {
 
 	/// Constructs a new `VecIter` from a [`Vector`].
-	pub fn new(vector: Vector<T>) -> Self {
+	pub const fn new(vector: Vector<T>) -> Self {
 		Self {
 			vector,
 			index: 0
