@@ -100,6 +100,7 @@ impl Point2 {
 	}
 
 	/// Constructs a new `Point2` from a length-two slice.
+	#[inline]
 	pub const fn with_slice<'a>(coordinates: &'a [f32; 2]) -> Self {
 		Self {
 			x: coordinates[0],
