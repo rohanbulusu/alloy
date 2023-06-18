@@ -454,6 +454,7 @@ impl Point2 {
 	/// let b = Point2::new(2.0, 3.0);
 	/// assert_eq!(Point2::slope(&a, &b), 1.0);
 	/// ```
+	#[inline]
 	pub fn slope(a: &Self, b: &Self) -> f32 {
 		(a.y - b.y) / (a.x - b.x)
 	}
