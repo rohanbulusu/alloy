@@ -1454,6 +1454,7 @@ impl<T> Matrix<T> where T: Default + PartialEq + Add<Output=T> {
 	/// let m = Matrix::new([[1, 1], [1, -1], [4, 3]]);
 	/// assert_eq!(m.rank(), 2);
 	/// ```
+	#[inline]
 	pub fn rank(&self) -> usize {
 		if self.dims.num_rows > self.dims.num_cols {
 			return self.dims.num_rows - self.null_dim();
