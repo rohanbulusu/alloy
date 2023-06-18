@@ -904,7 +904,6 @@ impl Point3 {
 		self.y < other.y
 	}
 
-	
 	/// Whether or not `self` is horizontally aligned with `self`.
 	///
 	/// # Examples
@@ -913,7 +912,7 @@ impl Point3 {
 	/// let a = Point3::new(3.0, 2.0, 4.0);
 	/// let b = Point3::new(3.0, -2.0, -5.0);
 	/// assert!(a.horizontal_aligned(&b));
-	/// assert!(!a.horizontal_aligned(&b));
+	/// assert!(b.horizontal_aligned(&a));
 	/// ```
 	pub fn horizontal_aligned(&self, other: &Self) -> bool {
 		self.x == other.x
