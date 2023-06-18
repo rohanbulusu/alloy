@@ -696,6 +696,112 @@ impl Point3 {
 		self.z += translation.get(2);
 	}
 
+	/// Performs an affine transformation of `self` in place.
+	///
+	/// If the provided [`Vector`] is zero-dimensional, `self` is left
+	/// unchanged; if it's one-dimensional, `translation` is treated like a 
+	/// two-dimensional vector with horizontal component specified by the
+	/// provided single element; if it's of dimension two, the 
+	/// two components are used as horizontal and vertical transformation 
+	/// elements respectively. For `Vector`s of dimension three or greater, the
+	/// first three elements only are used in the transformation.
+	///
+	/// # Examples
+	/// ```
+	/// # use crate::space::linal::Vector;
+	/// # use crate::space::points::Point3;
+	/// let v = Vector::new([]);
+	/// let mut position = Point3::new(0.0, 0.0, 0.0).translate(v);
+	/// assert_eq!(position.x, 0.0);
+	/// assert_eq!(position.y, 0.0);
+	/// assert_eq!(position.z, 0.0);
+	/// ```
+	/// ```
+	/// # use crate::space::linal::Vector;
+	/// # use crate::space::points::Point3;
+	/// let v = Vector::new([1.0]);
+	/// let mut position = Point3::new(0.0, 0.0, 0.0).translate(v);
+	/// assert_eq!(position.x, 1.0);
+	/// assert_eq!(position.y, 0.0);
+	/// assert_eq!(position.z, 0.0);
+	/// ```
+	/// ```
+	/// # use crate::space::linal::Vector;
+	/// # use crate::space::points::Point3;
+	/// let v = Vector::new([1.0, 2.0]);
+	/// let mut position = Point3::new(0.0, 0.0, 0.0).translate(v);
+	/// assert_eq!(position.x, 1.0);
+	/// assert_eq!(position.y, 2.0);
+	/// assert_eq!(position.z, 0.0);
+	/// ```
+	/// ```
+	/// # use crate::space::linal::Vector;
+	/// # use crate::space::points::Point3;
+	/// let v = Vector::new([1.0, 2.0, 3.0]);
+	/// let mut position = Point3::new(0.0, 0.0, 0.0).translate(v);
+	/// assert_eq!(position.x, 1.0);
+	/// assert_eq!(position.y, 2.0);
+	/// assert_eq!(position.z, 3.0);
+	/// ```
+	/// ```
+	/// # use crate::space::linal::Vector;
+	/// # use crate::space::points::Point3;
+	/// let v = Vector::new([1.0, 2.0, 3.0, 4.0]);
+	/// let mut position = Point3::new(0.0, 0.0, 0.0).translate(v);
+	/// assert_eq!(position.x, 1.0);
+	/// assert_eq!(position.y, 2.0);
+	/// assert_eq!(position.z, 3.0);
+	/// ```
+	pub fn translate(mut self, translation: Vector<f32>) -> Self {
+		if translation.dim == 1 {
+			self.x += translation.get(0);
+		}
+		if translation.dim == 2 {
+			self.x += translation.get(0);
+			self.y += translation.get(1);
+		}
+		if translation.dim >= 3 {
+			self.x += translation.get(0);
+			self.y += translation.get(1);
+			self.z += translation.get(2);
+		}
+		self
+	}
+
+	/// Computes the distance between `self` and `other`.
+	///
+	/// # Examples
+	/// ```
+	/// # use crate::space::points::Point3;
+	/// let a = Point3::new(0.0, 0.0, 0.0);
+	/// let b = Point3::new(1.0, 2.0, 2.0);
+	/// assert_eq!(a.to(&b), 3.0);
+	/// ```
+	/// ```
+	/// # use crate::space::points::Point3;
+	/// let a = Point3::new(0.0, 0.0, 0.0);
+	/// let b = Point3::new(1.0, -2.0, 2.0);
+	/// assert_eq!(a.to(&b), 3.0);
+	/// ```
+	/// ```
+	/// # use crate::space::points::Point3;
+	/// let a = Point3::new(0.0, 1.0, 0.0);
+	/// let b = Point3::new(1.0, -1.0, 2.0);
+	/// assert_eq!(a.to(&b), 3.0);
+	/// ```
+	/// ```
+	/// # use crate::space::points::Point3;
+	/// let a = Point3::new(1.0, -1.0, 2.0);
+	/// let b = Point3::new(1.0, -1.0, 2.0);
+	/// assert_eq!(a.to(&b), 0.0);
+	/// ```
+	pub fn to(&self, other: &Self) -> f32 {
+		let x = (self.x - other.x).abs();
+		let y = (self.y - other.y).abs();
+		let z = (self.z - other.z).abs();
+		(x*x + y*y + z*z).sqrt()
+	}
+
 }
 
 /// Specifies relative locations between [`Point2`]s and/or [`Point3`]s.
