@@ -794,7 +794,7 @@ impl MatrixDimensions {
 
 	/// Constructs a new `MatrixDimensions` from a row count (`num_rows`) and a
 	/// a column count (`num_cols`).
-	pub fn new(num_rows: usize, num_cols: usize) -> Self {
+	pub const fn new(num_rows: usize, num_cols: usize) -> Self {
 		Self { num_rows, num_cols }
 	}
 
