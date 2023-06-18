@@ -808,7 +808,7 @@ impl MatrixDimensions {
 	/// let dims = MatrixDimensions::new(2, 3);
 	/// assert!(dims.are(2, 3));
 	/// ```
-	pub fn are(&self, candidate_rows: usize, candidate_cols: usize) -> bool {
+	pub const fn are(&self, candidate_rows: usize, candidate_cols: usize) -> bool {
 		self.num_rows == candidate_rows && self.num_cols == candidate_cols
 	}
 
