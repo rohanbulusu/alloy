@@ -962,6 +962,7 @@ impl<T> Matrix<T> {
 	/// let m = Matrix::new([[1, 2, 3], [4, 5, 6]]);
 	/// assert_eq!(m.get(1, 2), 6);
 	/// ```
+	#[inline]
 	pub fn get(&self, candidate_row: usize, candidate_col: usize) -> T {
 		if self.dims.are(0, 0) {
 			panic!("Cannot index into a zero-dimensional Matrix")
@@ -1126,6 +1127,7 @@ impl<T> Matrix<T> {
 	/// let transposed_m = Matrix::new([[1, 4], [2, 5], [3, 6]]);
 	/// assert_eq!(m.transpose(), transposed_m);
 	/// ```
+	#[inline]
 	pub fn transpose(&self) -> Self {
 		let mut transpose_rows: Vec<Vec<T>> = Vec::with_capacity(self.dims.num_cols);
 		for j in 0..self.dims.num_cols {
