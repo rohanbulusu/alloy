@@ -91,6 +91,7 @@ impl Point2 {
 	}
 
 	/// Constructs a new `Point2` from a length-two array.
+	#[inline]
 	pub const fn with_array(coordinates: [f32; 2]) -> Self {
 		Self {
 			x: coordinates[0],
