@@ -1071,7 +1071,7 @@ impl<T> Matrix<T> {
 	/// let d = Matrix::new([[1], [2]]);
 	/// assert!(!c.summable_with(&d));
 	/// ```
-	pub fn summable_with(&self, other: &Self) -> bool {
+	pub const fn summable_with(&self, other: &Self) -> bool {
 		self.dims == other.dims
 	}
 
