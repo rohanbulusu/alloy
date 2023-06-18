@@ -36,7 +36,7 @@ impl Angle {
 	/// assert_eq!(Angle::to_degrees(theta), 180.0);
 	/// ```
 	#[inline]
-	pub const fn to_degrees(theta: f64) -> f64 {
+	pub fn to_degrees(theta: f64) -> f64 {
 		theta * Self::RADIANS_TO_DEGREES
 	}
 
@@ -49,13 +49,13 @@ impl Angle {
 	/// assert_eq!(Angle::to_radians(theta), std::f64::consts::PI);
 	/// ```
 	#[inline]
-	pub const fn to_radians(theta: f64) -> f64 {
+	pub fn to_radians(theta: f64) -> f64 {
 		theta * Self::DEGREES_TO_RADIANS
 	}
 
 	/// Constructs a new `Angle` from a degrees value.
 	#[inline]
-	pub const fn with_degrees(theta: f64) -> Self {
+	pub fn with_degrees(theta: f64) -> Self {
 		Self {
 			degrees: theta,
 			radians: Self::to_radians(theta)
@@ -64,7 +64,7 @@ impl Angle {
 
 	/// Constructs a new `Angle` from a radians value.
 	#[inline]
-	pub const fn with_radians(theta: f64) -> Self {
+	pub fn with_radians(theta: f64) -> Self {
 		Self {
 			degrees: Self::to_degrees(theta),
 			radians: theta
@@ -91,7 +91,7 @@ impl Point2 {
 	}
 
 	/// Constructs a new `Point2` from a length-two array.
-	pub fn with_array(coordinates: [f32; 2]) -> Self {
+	pub const fn with_array(coordinates: [f32; 2]) -> Self {
 		Self {
 			x: coordinates[0],
 			y: coordinates[1]
