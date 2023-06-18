@@ -85,7 +85,7 @@ pub struct Point2 {
 impl Point2 {
 
 	/// Constructs a new `Point2` from individual [`f32`] components.
-	pub fn new(x: f32, y: f32) -> Self {
+	pub const fn new(x: f32, y: f32) -> Self {
 		Self { x, y }
 	}
 
