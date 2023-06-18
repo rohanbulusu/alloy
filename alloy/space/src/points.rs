@@ -500,11 +500,13 @@ pub struct Point3 {
 impl Point3 {
 
 	/// Constructs a new `Point3` from individual [`f32`] components.
+	#[inline]
 	pub fn new(x: f32, y: f32, z: f32) -> Self {
 		Self { x, y, z }
 	}
 
 	/// Constructs a new `Point3` from a length-three array.
+	#[inline]
 	pub fn with_array(coordinates: [f32; 3]) -> Self {
 		Self {
 			x: coordinates[0],
@@ -514,6 +516,7 @@ impl Point3 {
 	}
 
 	/// Constructs a new `Point3` from a length-three slice.
+	#[inline]
 	pub fn with_slice<'a>(coordinates: &'a [f32; 3]) -> Self {
 		Self {
 			x: coordinates[0],
