@@ -1761,7 +1761,7 @@ pub struct MatrixCols<'a, T> {
 impl<'a, T> MatrixCols<'a, T> {
 
 	/// Constructs a new `MatrixCols` from relevant `Matrix` information.
-	pub fn new(ptr: &'a std::ptr::NonNull<T>, num_cols: usize, elements_per_col: usize) -> Self {
+	pub const fn new(ptr: &'a std::ptr::NonNull<T>, num_cols: usize, elements_per_col: usize) -> Self {
 		Self {
 			ptr,
 			num_cols,
