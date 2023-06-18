@@ -367,6 +367,7 @@ impl Point2 {
 	/// assert!(a.left_of(&b));
 	/// assert!(!b.left_of(&a));
 	/// ```
+	#[inline]
 	pub fn left_of(&self, other: &Self) -> bool {
 		self.x < other.x
 	}
@@ -381,6 +382,7 @@ impl Point2 {
 	/// assert!(a.right_of(&b));
 	/// assert!(!b.right_of(&a));
 	/// ```
+	#[inline]
 	pub fn right_of(&self, other: &Self) -> bool {
 		self.x > other.x
 	}
