@@ -471,6 +471,7 @@ impl Point2 {
 	/// assert_eq!(y(2.0), 3.0);
 	/// assert_eq!(y(3.0), 4.0);
 	/// ```
+	#[inline]
 	pub fn line(a: Self, b: Self) -> impl Fn(f32) -> f32 {
 		return move |x| Self::slope(&a, &b) * (x - a.x) + a.y;
 	}
