@@ -978,7 +978,7 @@ impl Point3 {
 		self.z == other.z
 	}
 
-	/// The unique plane described by `a`, `b`, and `c`.
+	/// Determines the unique plane described by `a`, `b`, and `c`.
 	///
 	/// # Panics
 	/// If `a`, `b`, and `c` are collinear, it's not possible to construct a 
