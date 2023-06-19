@@ -1,6 +1,7 @@
 
 [workspace]
 members = [
-    "space"
+    "space",
+    "chem"
 ]
 
