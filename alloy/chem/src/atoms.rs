@@ -1,0 +1,1 @@
+//! Structs and enums for atoms and their elementary interactions.

@@ -1,0 +1,1 @@
+//! Structs for bonds, molecules, and their interactions.

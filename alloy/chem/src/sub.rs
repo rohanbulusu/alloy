@@ -1,0 +1,1 @@
+//! Structs for subatomic particles and their mechanics.
