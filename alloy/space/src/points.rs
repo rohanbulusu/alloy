@@ -1025,6 +1025,39 @@ impl Point3 {
 		}
 	}
 
+	/// Whether or not `self` is contained in the disc formed by the point `c`
+	/// and radius `r`.
+	///
+	/// # Examples
+	/// ```
+	/// # use crate::space::points::Point3;
+	/// let center = Point3::new(0.0, 0.0, 0.0);
+	/// let radius = 1.0;
+	/// 
+	/// let inside = Point3::new(0.2, 0.1, 0.3);
+	/// assert!(inside.within(center, radius));
+	///
+	/// let outside = Point3::new(1.0, 4.3, 2.3);
+	/// assert!(!outside.within(center, radius));
+	/// ```
+	/// ```
+	/// # use crate::space::points::Point3;
+	/// let center = Point3::new(1.0, -3.0, 4.0);
+	/// let radius = 0.5;
+	/// 
+	/// let inside = Point3::new(1.2, -3.1, 4.3);
+	/// assert!(inside.within(center, radius));
+	///
+	/// let outside = Point3::new(1.0, 4.3, 2.3);
+	/// assert!(!outside.within(center, radius));
+	/// ```
+	pub fn within(&self, c: Self, r: f32) -> bool {
+		let x_squared = (self.x - c.x).powi(2);
+		let y_squared = (self.y - c.y).powi(2);
+		let z_squared = (self.z - c.z).powi(2);
+		(x_squared + y_squared + z_squared).sqrt() < r
+	}
+
 }
 
 impl PartialEq for Point3 {
