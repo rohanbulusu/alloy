@@ -978,6 +978,53 @@ impl Point3 {
 		self.z == other.z
 	}
 
+	/// The unique plane described by `a`, `b`, and `c`.
+	///
+	/// # Panics
+	/// If `a`, `b`, and `c` are collinear, it's not possible to construct a 
+	/// plane; this yields a panic.
+	/// ```should_panic
+	/// # use crate::space::points::Point3;
+	/// let a = Point3::new(1.0, 0.0, 2.0);
+	/// let b = Point3::new(2.0, 0.0, 3.0);
+	/// let c = Point3::new(3.0, 0.0, 4.0);
+	/// let _ = Point3::plane(a, b, c);
+	/// ```
+	/// z = x - 2y + 2
+	/// # Examples
+	/// ```
+	/// # use crate::space::points::Point3;
+	/// let a = Point3::new(2.0, 1.0, 2.0);
+	/// let b = Point3::new(1.0, 5.0, -7.0);
+	/// let c = Point3::new(0.0, 0.0, 2.0);
+	/// let p = Point3::plane(a, b, c);
+	/// assert_eq!(p(1.0, 5.0), -7.0);
+	/// assert_eq!(p(2.0, 1.0), 2.0);
+	/// assert_eq!(p(0.0, 0.0), 2.0);
+	/// assert_eq!(p(12.0, 3.0), 8.0);
+	/// ```
+	pub fn plane(a: Self, b: Self, c: Self) -> impl Fn(f32, f32) -> f32 {
+		if a.collinear_with(&b, &c) {
+			panic!("Points must be collinear to form a unique plane")
+		}
+		let vec_one = Vector::new([
+			a.x - b.x,
+			a.y - b.y,
+			a.z - b.z
+		]);
+		let vec_two = Vector::new([
+			b.x - c.x,
+			b.y - c.y,
+			b.z - c.z
+		]);
+		let normal = Vector::cross(vec_one, vec_two);
+		let intercept = -(normal.get(0)*a.x + normal.get(1)*a.y + normal.get(2)*a.z);
+		return move |x, y| {
+			let unscaled = x*normal.get(0) + y*normal.get(1) + intercept;
+			unscaled / -normal.get(2)
+		}
+	}
+
 }
 
 impl PartialEq for Point3 {
