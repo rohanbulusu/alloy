@@ -5,7 +5,7 @@
 //! angular data through the `Angle` struct.
 //!
 //! Points are also represented; support is given particularly for `Point2` and
-/// `Point3`.
+//! `Point3`.
 
 #![warn(missing_docs)]
 #![deny(rust_2018_idioms)]
