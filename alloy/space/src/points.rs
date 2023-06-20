@@ -486,9 +486,9 @@ impl PartialEq for Point2 {
 	}
 }
 
-impl Into<Vector<f32>> for Point2 {
-	fn into(self) -> Vector<f32> {
-		Vector::<f32>::new([self.x, self.y])
+impl From<Point2> for Vector<f32> {
+	fn from(value: Point2) -> Vector<f32> {
+
 	}
 }
 
