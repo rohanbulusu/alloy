@@ -486,6 +486,12 @@ impl PartialEq for Point2 {
 	}
 }
 
+impl Into<Vector<f32>> for Point2 {
+	fn into(self) -> Vector<f32> {
+		Vector::<f32>::new([self.x, self.y])
+	}
+}
+
 /// Representation of a three-dimensional point.
 #[derive(Clone, Copy)]
 pub struct Point3 {
