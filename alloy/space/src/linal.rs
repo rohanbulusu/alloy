@@ -71,6 +71,30 @@ impl<T> Vector<T> {
 
 }
 
+impl Vector<f32> {
+
+	/// Computes the norm of a `Vector<f32>`.
+	///
+	/// # Examples.
+	/// ```
+	/// # use crate::space::linal::Vector;
+	/// let v = Vector::<f32>::new([3.0, 4.0]);
+	/// assert_eq!(v.norm(), 5.0);
+	/// ```
+	#[inline]
+	pub fn norm(&self) -> f32 {
+		if self.dim == 0 {
+			return 0.0;
+		}
+		let mut coord_total = 0.0;
+		for i in 0..self.dim {
+			coord_total += self.get(i).powi(2);
+		}
+		coord_total.sqrt()
+	}
+
+}
+
 impl<T> Vector<T> where T: Sub<Output=T> + Mul<Output=T> {
 
 	/// Cross product between `a` and `b`.
