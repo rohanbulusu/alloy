@@ -1075,6 +1075,12 @@ impl PartialEq for Point3 {
 	}
 }
 
+impl From<Point3> for Vector<f32> {
+	fn from(value: Point3) -> Vector<f32> {
+		Vector::<f32>::new([value.x, value.y, value.z])
+	}
+}
+
 #[cfg(test)]
 mod point2 {
 
