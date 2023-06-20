@@ -488,7 +488,7 @@ impl PartialEq for Point2 {
 
 impl From<Point2> for Vector<f32> {
 	fn from(value: Point2) -> Vector<f32> {
-
+		Vector::<f32>::new(value.x, value.y)
 	}
 }
 
