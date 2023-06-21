@@ -75,7 +75,7 @@ impl Vector<f32> {
 
 	/// Computes the norm of a `Vector<f32>`.
 	///
-	/// # Examples.
+	/// # Examples
 	/// ```
 	/// # use crate::space::linal::Vector;
 	/// let v = Vector::<f32>::new([3.0, 4.0]);
@@ -91,6 +91,24 @@ impl Vector<f32> {
 			coord_total += self.get(i).powi(2);
 		}
 		coord_total.sqrt()
+	}
+
+	/// Returns a normalized version of `self`.
+	///
+	/// # Examples
+	/// ```
+	/// # use crate::space::linal::Vector;
+	/// let v = Vector::<f32>::new([5.0, 0.0, 0.0]);
+	/// let w = Vector::<f32>::new([1.0, 0.0, 0.0]);
+	/// assert_eq!(v.normalized(), w);
+	/// ```
+	pub fn normalized(&self) -> Self {
+		let norm = self.norm();
+		let mut components = Vec::with_capacity(self.dim);
+		for i in 0..self.dim {
+			components.push(self.get(i) / norm);
+		}
+		Self::with_vec(components)
 	}
 
 }
