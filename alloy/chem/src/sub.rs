@@ -8,7 +8,6 @@ pub const C: usize = 299792458;
 /// Planck's constant in J/Hz
 pub const H: f64 = 6.62607015e-34;
 
-
 struct PhotonEnergy {
 	pub frequency: f32,
 	pub joules: f32
@@ -92,6 +91,26 @@ impl Photon {
 	pub fn raw_probability_at(&self, location: Point3) -> f32 {
 		let to_center = <Point3 as Into<Vector<f32>>>::into(location) - self.position.into();
 		to_center.norm().exp().recip()
+	}
+
+}
+
+/// Model for an electron.
+pub struct Electron {
+	position: Point3,
+	velocity: Vector<f32>
+}
+
+impl Electron {
+
+	pub const DEFAULT_ELECTRON_ENERGY: f32 = 0.0;
+
+	pub const MASS: f32 = 9.1093837e-31;
+
+	pub const CHARGE: f32 = 1.60217663e-19;
+
+	pub fn new(position: Point3, velocity: Vector<f32>) -> Self {
+		Self { position, velocity }
 	}
 
 }
