@@ -58,11 +58,11 @@ impl Photon {
 	pub const DEFAULT_PHOTON_FREQUENCY: f32 = 594.5;
 
 	/// Constructs a new `Photon` from a [`Point3`] position and a [`Vector`] 
-	/// velocity.
-	pub fn new(position: Point3, velocity: Vector<f32>) -> Self {
+	/// specifying the direction of its motion.
+	pub fn new(position: Point3, direction: Vector<f32>) -> Self {
 		Self {
 			position,
-			velocity: velocity*(C as f32),
+			velocity: direction*(C as f32),
 			energy: PhotonEnergy::with_frequency(Self::DEFAULT_PHOTON_FREQUENCY)
 		}
 	}
